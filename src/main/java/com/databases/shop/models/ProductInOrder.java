@@ -15,7 +15,7 @@ public class ProductInOrder {
     @EmbeddedId
     private ProductInOrderId id;
 
-    @MapsId(value = "productId")
+    @MapsId(value = "productArticul")
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @ManyToOne
     private Product product;

@@ -12,7 +12,7 @@ public class ProductInOrderId implements Serializable {
 
 
     private Long orderId;
-    private Long productId;
+    private Long productArticul;
 
     @Override
     public boolean equals(Object o) {
@@ -20,11 +20,11 @@ public class ProductInOrderId implements Serializable {
         if (!(o instanceof ProductInOrderId)) return false;
         ProductInOrderId that = (ProductInOrderId) o;
         return getOrderId().equals(that.getOrderId()) &&
-                getProductId().equals(that.getProductId());
+                getProductArticul().equals(that.getProductArticul());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getOrderId(), getProductId());
+        return Objects.hash(getOrderId(), getProductArticul());
     }
 }
