@@ -26,4 +26,8 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     private Set<Order> orders = new HashSet<>();
 
+    @NotNull
+    @Embedded
+    private Contacts contacts;
+
 }
