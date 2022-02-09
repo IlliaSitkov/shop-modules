@@ -28,21 +28,21 @@ product(8764, "Glitter", "Small pack", 15, 20, 98675643, 5).
 product(1234, "Coloured Paper", "12 colours", 12, 22, 83742733, 6).
 
 % предикат покупець(іпн,піб,адреса)
-customer('0000000000',full_name('Petrenko','Roman','Stepanovych'),address('Ukraine','Kharkiv','Izum','Zelena st.',5)).
-customer('0000000001',full_name('Vasylenko','Andriy','Vasyliovych'),address('Ukraine','Chernihiv','Pryluky','Vesela st.',12)).
-customer('0000000002',full_name('Sedash','Nina','Yuriivna'),address('Ukraine','Donetsk','Bakhmut','Pivdenna st.',23)).
-customer('0000000003',full_name('Trubeko','Tetyana','Vasylivna'),address('Ukraine','Vinnytsia','Tulchyn','Chervona st.',54)).
-customer('0000000004',full_name('Chaplyk','Dmytro','Vasyliovych'),address('Ukraine','Vinnytsia','Zhmerynka','Horbatova st.',45)).
-customer('0000000005',full_name('Volkov','Valentyn','Romanovych'),address('Ukraine','Odesa','Izmail','Vyshneva st.',9)).
-customer('0000000006',full_name('Vaha','Ludmila','Oleksiivna'),address('Ukraine','Zaporizhzhia','Zaporizhzhia','Chorna st.',65)).
-customer('0000000007',full_name('Zayarniy','Oleksandr','Hryhorovych'),address('Ukraine','Kyiv','Brovary','Holodna st.',43)).
-customer('0000000008',full_name('Andrushchenko','Stepan','Maksymovych'),address('Ukraine','Donetsk','Kramatorsk','Sumna st.',85)).
-customer('0000000009',full_name('Salnikov','Myhaylo','Serhiyovych'),address('Ukraine','Lviv','Lviv','Nova st.',30)).
-customer('0000000010',full_name('Titov','Roman','Dmytrovych'),address('Ukraine','Lviv','Holodna Voda','Tepla st.',71)).
-customer('0000000011',full_name('Lagutkova','Elizavetta','Serhiivna'),address('Ukraine','Dnipro','Kryviy Rih','Dovha st.',3)).
-customer('0000000012',full_name('Grinev','Pavlo','Oleksandrovych'),address('Ukraine','Kyiv','Kyiv','Soniachna st.',84)).
-customer('0000000013',full_name('Zozulia','Ivan','Ivanovych'),address('Ukraine','Mykolaiv','Mykolaiv','Poetychna st.',49)).
-customer('0000000014',full_name('Hryhorenko','David','Romanovych'),address('Ukraine','Donetsk','Slovyansk','Chysta st.',76)).
+customer('000000000',full_name('Petrenko','Roman','Stepanovych'),address('Ukraine','Kharkiv','Izum','Zelena st.',5)).
+customer('000000001',full_name('Vasylenko','Andriy','Vasyliovych'),address('Ukraine','Chernihiv','Pryluky','Vesela st.',12)).
+customer('000000002',full_name('Sedash','Nina','Yuriivna'),address('Ukraine','Donetsk','Bakhmut','Pivdenna st.',23)).
+customer('000000003',full_name('Trubeko','Tetyana','Vasylivna'),address('Ukraine','Vinnytsia','Tulchyn','Chervona st.',54)).
+customer('000000004',full_name('Chaplyk','Dmytro','Vasyliovych'),address('Ukraine','Vinnytsia','Zhmerynka','Horbatova st.',45)).
+customer('000000005',full_name('Volkov','Valentyn','Romanovych'),address('Ukraine','Odesa','Izmail','Vyshneva st.',9)).
+customer('000000006',full_name('Vaha','Ludmila','Oleksiivna'),address('Ukraine','Zaporizhzhia','Zaporizhzhia','Chorna st.',65)).
+customer('000000007',full_name('Zayarniy','Oleksandr','Hryhorovych'),address('Ukraine','Kyiv','Brovary','Holodna st.',43)).
+customer('000000008',full_name('Andrushchenko','Stepan','Maksymovych'),address('Ukraine','Donetsk','Kramatorsk','Sumna st.',85)).
+customer('000000009',full_name('Salnikov','Myhaylo','Serhiyovych'),address('Ukraine','Lviv','Lviv','Nova st.',30)).
+customer('000000010',full_name('Titov','Roman','Dmytrovych'),address('Ukraine','Lviv','Holodna Voda','Tepla st.',71)).
+customer('000000011',full_name('Lagutkova','Elizavetta','Serhiivna'),address('Ukraine','Dnipro','Kryviy Rih','Dovha st.',3)).
+customer('000000012',full_name('Grinev','Pavlo','Oleksandrovych'),address('Ukraine','Kyiv','Kyiv','Soniachna st.',84)).
+customer('000000013',full_name('Zozulia','Ivan','Ivanovych'),address('Ukraine','Mykolaiv','Mykolaiv','Poetychna st.',49)).
+customer('000000014',full_name('Hryhorenko','David','Romanovych'),address('Ukraine','Donetsk','Slovyansk','Chysta st.',76)).
 
 % предикат продавець(іпн,піб)
 salesman('100000000',full_name('Petrov','Oleg','Ivanovych')).
@@ -126,14 +126,19 @@ order_row(7, 5643, 1).
 order_row(7, 3421, 3).
 order_row(7, 4532, 1).
 
-order_row(8, 9864, 5).
-order_row(8, 9876, 2).
+
+% 8, 31 - orders for 000000006
+%order_row(8, 9864, 5).%
+%order_row(8, 9876, 2).%
 order_row(8, 8764, 2).
 
 order_row(9, 9864, 8).
+order_row(9, 2321, 8).
+order_row(9, 2433, 8).
 
 order_row(10, 5643, 2).
 order_row(10, 8764, 2).
+%order_row(10, 1234, 2).%
 
 order_row(11, 5643, 2).
 order_row(11, 9864, 3).
@@ -141,6 +146,7 @@ order_row(11, 8764, 3).
 
 order_row(12, 2433, 2).
 order_row(12, 4532, 1).
+order_row(12, 8764, 1).
 
 order_row(13, 3421, 1).
 order_row(13, 2314, 2).
@@ -164,9 +170,10 @@ order_row(18, 5643, 2).
 order_row(18, 2433, 3).
 order_row(18, 9876, 1).
 
-order_row(19, 9864, 4).
-order_row(19, 3421, 4).
-order_row(19, 2321, 1).
+order_row(19, 3421, 4).%
+order_row(19, 9876, 4).%
+order_row(19, 1234, 1).%
+order_row(19, 5643, 3).%
 
 order_row(20, 2433, 2).
 order_row(20, 2321, 1).
@@ -209,7 +216,8 @@ order_row(29, 3421, 4).
 order_row(30, 4532, 1).
 order_row(30, 2314, 1).
 
-order_row(31, 2314, 4).
+order_row(31, 8764, 4).%
+order_row(31, 4532, 4).%
 
 order_row(32, 5643, 2).
 order_row(32, 2314, 6).
@@ -228,6 +236,9 @@ order_row(34, 9876, 1).
 product_has_articul(product(Articul,_,_,_,_,_,_),Articul).
 
 product_has_category(product(_,_,_,_,_,_,CategoryCode),CategoryCode).
+
+product_has_provider(ProductCode,ProviderCode):-
+    product(ProductCode,_,_,_,_,ProviderCode,_).
 
 get_product_by_articul(Articul,product(Articul,N,D,Q,P,E,C)):-
     product(Articul,N,D,Q,P,E,C).
@@ -259,35 +270,95 @@ categories_h1(CategoryCode,ResCategoryCode):-
     category_has_customer(ResCategoryCode,Customer),
     CategoryCode =\= ResCategoryCode.
 
-z01_categories(CategoryCode,ResCategoryCode):-
+z01_categories_at_least_one(CategoryCode,ResCategoryCode):-
     distinct(categories_h1(CategoryCode,ResCategoryCode)).
 
+% -------------------------------------------------------------
 
+customer_has_provider(CustomerCode,ProviderCode):-
+    order_has_customer(OrderCode,CustomerCode),
+    order_has_product(OrderCode,ProductCode),
+    product_has_provider(ProductCode,ProviderCode).
 
+is_provider_code(ProviderCode):-
+    provider(ProviderCode,_,_,_).
 
+is_customer_code(CustomerCode):-
+    customer(CustomerCode,_,_).
 
-
-
-
-
+% покупці, які не купують товар, який постачається одним з постачальників, які не постачають товари, які купує певний покупець
+% покупці, які не отримують товар якогось із потрібних постачальників (таких, що не постачають певному покупцю)
+bad_customers_not_bought_one(CustomerCode,BadCustomerCode):-
+    is_provider_code(ProviderCode),
+    is_customer_code(BadCustomerCode),
+    not(customer_has_provider(CustomerCode,ProviderCode)),
+    not(customer_has_provider(BadCustomerCode,ProviderCode)).
 
 %3. Знайти покупців, які купили товари з усіх не тих і тільки таких категорій, з яких купив певний покупець.
+
+%3. Знайти покупців, які купили товари усіх не тих і тільки таких виробників, товари яких купив певний покупець.
+
+% покупці, які купили товари усіх не тих постачальників, що й певний покупець
+% (але, можливо, купили і товари постачальника певного покупця)
+customers_all_not_those(CustomerCode,GoodCustomerCode):-
+    customer(GoodCustomerCode,_,_),
+    not(bad_customers_not_bought_one(CustomerCode,GoodCustomerCode)).
+
+% покупці, які купили товар хоча б в 1 постачальника, в якого купив товар певний покупець
+bad_customers_bought_one(CustomerCode,BadCustomerCode):-
+    customer_has_provider(CustomerCode,ProviderCode),
+    customer_has_provider(BadCustomerCode,ProviderCode).
+
+%3. Знайти покупців, які купили товари усіх не тих і тільки таких виробників, товари яких купив певний покупець.
+customers_only_all_not_those(CustomerCode,GoodCustomerCode):-
+    customers_all_not_those(CustomerCode,GoodCustomerCode),
+    not(bad_customers_bought_one(CustomerCode,GoodCustomerCode)).
+
+%?- customers_only_all_not_those('000000011',C).
+%C = '000000006' ;
+%false.
+
+%?- customers_only_all_not_those('000000004',C).
+%C = '000000012' ;
+%false.
+
 
 %6. Знайти категорії, товари з яких купувалися усіма тими, і тільки тими покупцями, які купували товари з певної категорії
 
 
+% категорії, які не мають хоча б 1 такого покупця, який є в даній категорії
+bad_categories_not_have_one(CategoryCode,BadCategoryCode):-
+    category(BadCategoryCode,_,_),
+    category_has_customer(CategoryCode,CustomerCode),
+    not(category_has_customer(BadCategoryCode,CustomerCode)).
+
+% Знайти категорії, товари з яких купувалися усіма тими покупцями, які купували товари з певної категорії
+categories_all_those(CategoryCode,GoodCategoryCode):-
+    category(GoodCategoryCode,_,_),
+    not(bad_categories_not_have_one(CategoryCode,GoodCategoryCode)),
+    CategoryCode =\= GoodCategoryCode.
+
+%?- categories_all_those(3,C).
+%C = 2 ;
+%C = 5 ;
+%false.
 
 
 
+% категорії, які мають покупця, якого немає в даній категорії
+bad_categories_have_one(CategoryCode,BadCategoryCode):-
+    category(BadCategoryCode,_,_),
+    category_has_customer(BadCategoryCode,CustomerCode),
+    not(category_has_customer(CategoryCode,CustomerCode)).
 
 
+categories_only_all_those(CategoryCode,GoodCategoryCode):-
+    categories_all_those(CategoryCode,GoodCategoryCode),
+    not(bad_categories_have_one(CategoryCode,GoodCategoryCode)).
 
-
-
-
-
-
-
+%?- categories_only_all_those(2,C).
+%C = 5 ;
+%false.
 
 
 
