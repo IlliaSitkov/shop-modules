@@ -54,11 +54,12 @@ salesman('600000000',full_name('Shevchenko','Valiria','Borysivna')).
 salesman('700000000',full_name('Romanenko','Ivan','Antonovych')).
 
 % предикат замовлення(номер_замовлення,іпн_продавця,іпн_покупця,дата_замовлення,статус_замовлення)
-order(1,'100000000','000000001',date(30,1,2022),done).
-order(2,'100000000','000000001',date(31,1,2022),done).
+% First salesman for some time has one order with one order_row
+%order(1,'100000000','000000001',date(30,1,2022),done).
+%order(2,'100000000','000000001',date(31,1,2022),done).
 order(3,'100000000','000000002',date(1,2,2022),in_progress).
-order(4,'100000000','000000002',date(2,2,2022),in_progress).
-order(5,'100000000','000000003',date(5,2,2022),new).
+%order(4,'100000000','000000002',date(2,2,2022),in_progress).
+%order(5,'100000000','000000003',date(5,2,2022),new).
 
 order(6,'200000000','000000004',date(31,1,2022),new).
 order(7,'200000000','000000005',date(1,2,2022),done).
@@ -105,8 +106,9 @@ order_row(2, 5648, 4).
 order_row(2, 2314, 1).
 order_row(2, 1234, 3).
 
-order_row(3, 2433, 1).
-order_row(3, 2321, 1).
+% First salesman for some time has one order with one order_row
+%order_row(3, 2433, 1).
+%order_row(3, 2321, 1).
 order_row(3, 5643, 2).
 
 order_row(4, 8764, 3).
@@ -414,10 +416,46 @@ income_from_product(ProductName, Income) :- product(Articul, ProductName, _, _, 
 % true.
 
 %------------------------------------------------
-% 2. Знайти всіх продавців, які продали товари всіх тих виробників, чиї товари продав певний продавець
 
+% Виробники, чиї товари продав продавець
+providers_of_salesman(SalesmanIpn,Edrpou) :- order(OrderCode, SalesmanIpn, _, _, _),
+                                             order_row(OrderCode, Articul,_),
+                                             product(Articul,_,_,_,_,Edrpou,_).
+
+% продавці, які не продали товари якогось з виробників, чиї товари продав певний продавець
+bad_salesmen(GivenSalesmanIpn,SalesmanIpn) :- providers_of_salesman(GivenSalesmanIpn,Edrpou),
+                                              salesman(SalesmanIpn,_),
+                                              not(providers_of_salesman(SalesmanIpn,Edrpou)).
+
+% 2. Знайти всіх продавців, які продали товари всіх тих виробників, чиї товари продав певний продавець
+salesmen_all_providers_of_given_salesman(GivenSalesmanIpn,SalesmanIpn,SalesmanSurname) :-
+                               salesman(GivenSalesmanIpn,_),
+                               salesman(SalesmanIpn,full_name(SalesmanSurname,_,_)),
+                               not(bad_salesmen(GivenSalesmanIpn,SalesmanIpn)),
+                               GivenSalesmanIpn \= SalesmanIpn.
+% ?- salesmen_all_providers_of_given_salesman('100000000',SalesmanIpn,SalesmanSurname).
+% SalesmanIpn = '200000000',
+% SalesmanSurname = 'Chernenko' ;
+% SalesmanIpn = '300000000',
+% SalesmanSurname = 'Voloshyn' ;
+% SalesmanIpn = '400000000',
+% SalesmanSurname = 'Stepanov' ;
+% SalesmanIpn = '500000000',
+% SalesmanSurname = 'Fedorova' ;
+% SalesmanIpn = '600000000',
+% SalesmanSurname = 'Shevchenko' ;
+% SalesmanIpn = '700000000',
+% SalesmanSurname = 'Romanenko'.
 
 %------------------------------------------------
+% предикат продавець(іпн,піб)
+% salesman('100000000',full_name('Petrov','Oleg','Ivanovych')).
+% предикат замовлення(номер_замовлення,іпн_продавця,іпн_покупця,дата_замовлення,статус_замовлення)
+% order(1,'100000000','000000001',date(30,1,2022),done).
+% order_row(order_id, articul, quantity).
+% order_row(1, 2321, 1).
+% product(articul, name, description, quantity, price, edrpou, cat_number).
+% product(2433, "Embroidery with flowers", "Beads included", 5, 40, 83742733, 1)
 % 4. Знайти покупців, які купували товари тільки тих постачальників, товари яких купував певний покупець
 
 
