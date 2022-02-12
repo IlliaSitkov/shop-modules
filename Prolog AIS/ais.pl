@@ -362,9 +362,63 @@ categories_only_all_those(CategoryCode,GoodCategoryCode):-
 
 
 
+% ----------------------------------------------
+
+% Список кількостей товару з рядків замовлення
+list_of_quantities(Articul, Quantity) :- order_row(_, Articul, Quantity).
+
+% Скільки продано товару
+quantity_of_sailed_product([],0) :- !.
+quantity_of_sailed_product([H|T],SumQuantity) :- quantity_of_sailed_product(T,SumQuantity1),
+                                                 SumQuantity is SumQuantity1 + H.
+
+% 1. Знайти суму, на яку було продано певного товару, заданого назвою (від початку роботи складу)
+% Чи замовлення всіх статусів рахувати??
+% income_from_product(ProductName,Income,QuantityList)
+income_from_product(ProductName, Income) :- product(Articul, ProductName, _, _, Price, _, _),
+                                            bagof(Quantity,list_of_quantities(Articul, Quantity),QuantityList),
+                                            quantity_of_sailed_product(QuantityList,SumQuantity),
+                                            Income is SumQuantity * Price.
+% Приклад 1
+% ?- income_from_product("Embroidery with flowers", Income).
+% Income = 960.
+% Приклад 2
+% ?- income_from_product(ProductName, Income).
+% ProductName = "Embroidery with flowers",
+% Income = 960 ;
+% ProductName = "Embroidery with cats",
+% Income = 750 ;
+% ProductName = "White paper",
+% Income = 1330 ;
+% ProductName = "Acrilic",
+% Income = 2600 ;
+% ProductName = "Knitting needles",
+% Income = 1350 ;
+% ProductName = "Knitting threads",
+% Income = 760 ;
+% ProductName = "Clay",
+% Income = 540 ;
+% ProductName = "Foamiran",
+% Income = 80 ;
+% ProductName = "Tape",
+% Income = 310 ;
+% ProductName = "Glitter",
+% Income = 860 ;
+% ProductName = "Coloured Paper",
+% Income = 88.
+% Приклад 3
+% ?- income_from_product(ProductName, 310).
+% ProductName = "Tape" ;
+% Приклад 4
+% ?- income_from_product("Tape", 310).
+% true.
+
+%------------------------------------------------
+% 2. Знайти всіх продавців, які продали товари всіх тих виробників, чиї товари продав певний продавець
 
 
-
+%------------------------------------------------
+% 4. Знайти покупців, які купували товари тільки тих постачальників, товари яких купував певний покупець
 
 
 
