@@ -373,16 +373,29 @@ quantity_of_sailed_product([],0) :- !.
 quantity_of_sailed_product([H|T],SumQuantity) :- quantity_of_sailed_product(T,SumQuantity1),
                                                  SumQuantity is SumQuantity1 + H.
 
-% 1. Знайти суму, на яку було продано певного товару, заданого назвою (від початку роботи складу)
 % Чи замовлення всіх статусів рахувати??
+% 5. Знайти суму, на яку було продано певного товару, заданого назвою (від початку роботи складу)
+% z05_income_from_product(?String, ?Integer)
+% Використання:
+% 1) За назвою товару ProductName знайти суму Income, на яку було продано цього товару:
+% z05_income_from_product(+ProductName, -Income).
+% 2) За сумою Income знайти назви товарів ProductName, яких було продано на цю суму:
+% z05_income_from_product(-ProductName, +Income).
+% 3) Вивести для кожного товару з назвою ProductName суму Income, на яку було продано цього товару:
+% z05_income_from_product(-ProductName, -Income).
+% 4) Перевірити, що Income - сума, на яку продано товару з назвою ProductName:
+% z05_income_from_product(+ProductName, +Income).
 z05_income_from_product(ProductName, Income) :- product(Articul, ProductName, _, _, Price, _, _),
                                                 bagof(Quantity,list_of_quantities(Articul, Quantity),QuantityList),
                                                 quantity_of_sailed_product(QuantityList,SumQuantity),
                                                 Income is SumQuantity * Price.
-% Приклад 1
+% Приклад 1: z05_income_from_product(+ProductName, -Income)
 % ?- z05_income_from_product("Embroidery with flowers", Income).
 % Income = 960.
-% Приклад 2
+% Приклад 2: z05_income_from_product(-ProductName, +Income)
+% ?- z05_income_from_product(ProductName, 310).
+% ProductName = "Tape" ;
+% Приклад 3: z05_income_from_product(-ProductName, -Income)
 % ?- z05_income_from_product(ProductName, Income).
 % ProductName = "Embroidery with flowers",
 % Income = 960 ;
@@ -406,32 +419,43 @@ z05_income_from_product(ProductName, Income) :- product(Articul, ProductName, _,
 % Income = 860 ;
 % ProductName = "Coloured Paper",
 % Income = 88.
-% Приклад 3
-% ?- z05_income_from_product(ProductName, 310).
-% ProductName = "Tape" ;
-% Приклад 4
+% Приклад 4: z05_income_from_product(+ProductName, +Income)
 % ?- z05_income_from_product("Tape", 310).
 % true.
 
 %------------------------------------------------
 % Постачальники, чиї товари продав продавець
 providers_of_salesman(SalesmanIpn,Edrpou) :- order(OrderCode, SalesmanIpn, _, _, _),
-                                             order_row(OrderCode, Articul,_),
+                                             order_row(OrderCode,Articul,_),
                                              product(Articul,_,_,_,_,Edrpou,_).
 
-% продавці, які не продавали товари якогось з постачальників, чиї товари продав певний продавець
+% Продавці, які не продавали товари якогось з постачальників, чиї товари продав певний продавець
 bad_salesmen(GivenSalesmanIpn,SalesmanIpn) :- providers_of_salesman(GivenSalesmanIpn,Edrpou),
                                               salesman(SalesmanIpn,_),
                                               not(providers_of_salesman(SalesmanIpn,Edrpou)).
 
 % 2. Знайти всіх продавців, які продали товари всіх тих постачальників,
 % чиї товари продав певний продавець
+% z02_salesmen_all_providers_of_given_salesman(?Integer, ?Integer, ?String)
+% Використання:
+% 1) За кодом певного продавця GivenSalesmanIpn знайти коди SalesmanIpn та прізвища SalesmanSurname
+% всіх продавців, які продали товари всіх тих постачальників, чиї товари продав певний продавець:
+% z02_salesmen_all_providers_of_given_salesman(+GivenSalesmanIpn,-SalesmanIpn,-SalesmanSurname).
+% 2) За кодом продавця SalesmanIpn та прізвищем SalesmanSurname визначити код певного продавця
+% GivenSalesmanIpn, який продав товари всіх тих постачальників, чиї товари продав продавець:
+% z02_salesmen_all_providers_of_given_salesman(-GivenSalesmanIpn,+SalesmanIpn,+SalesmanSurname).
+% 3) За кодом певного продавця GivenSalesmanIpn знайти коди SalesmanIpn всіх продавців, які продали
+% товари всіх тих постачальників, чиї товари продав певний продавець:
+% z02_salesmen_all_providers_of_given_salesman(+GivenSalesmanIpn,-SalesmanIpn,_).
+% 4) Перевірити, що продавець з кодом SalesmanIpn та прізвищем SalesmanSurname продав товари всіх тих
+% постачальників, чиї товари продав певний продавець з кодом GivenSalesmanIpn:
+% z02_salesmen_all_providers_of_given_salesman(+GivenSalesmanIpn,+SalesmanIpn,+SalesmanSurname).
 z02_salesmen_all_providers_of_given_salesman(GivenSalesmanIpn,SalesmanIpn,SalesmanSurname) :-
                                salesman(GivenSalesmanIpn,_),
                                salesman(SalesmanIpn,full_name(SalesmanSurname,_,_)),
                                not(bad_salesmen(GivenSalesmanIpn,SalesmanIpn)),
                                GivenSalesmanIpn \= SalesmanIpn.
-% Приклад 1
+% Приклад 1: z02_salesmen_all_providers_of_given_salesman(+GivenSalesmanIpn,-SalesmanIpn,-SalesmanSurname)
 % ?- z02_salesmen_all_providers_of_given_salesman('100000000',SalesmanIpn,SalesmanSurname).
 % SalesmanIpn = '200000000',
 % SalesmanSurname = 'Chernenko' ;
@@ -445,6 +469,19 @@ z02_salesmen_all_providers_of_given_salesman(GivenSalesmanIpn,SalesmanIpn,Salesm
 % SalesmanSurname = 'Shevchenko' ;
 % SalesmanIpn = '700000000',
 % SalesmanSurname = 'Romanenko'.
+% Приклад 2: z02_salesmen_all_providers_of_given_salesman(-GivenSalesmanIpn,+SalesmanIpn,+SalesmanSurname)
+% ?- z02_salesmen_all_providers_of_given_salesman(GivanSalesmanIpn,'400000000','Stepanov').
+% GivanSalesmanIpn = '100000000' ;
+% GivanSalesmanIpn = '700000000'.
+% Приклад 3: z02_salesmen_all_providers_of_given_salesman(+GivenSalesmanIpn,-SalesmanIpn,_)
+% ?- z02_salesmen_all_providers_of_given_salesman('700000000',SalesmanIpn,_).
+% SalesmanIpn = '200000000' ;
+% SalesmanIpn = '300000000' ;
+% SalesmanIpn = '400000000' ;
+% SalesmanIpn = '500000000' ;
+% Приклад 4: z02_salesmen_all_providers_of_given_salesman(+GivenSalesmanIpn,+SalesmanIpn,+SalesmanSurname)
+% ?- z02_salesmen_all_providers_of_given_salesman('100000000','500000000','Fedorova').
+% true.
 
 %------------------------------------------------
 % Постачальники, чиї товари купляв покупець
@@ -478,9 +515,23 @@ customers_just_providers_of_given_customer(GivenCustomerCode,CustomerCode,Custom
                        not(bad_customers_at_least_one_provider(GivenCustomerCode,CustomerCode)).
 
 % 4. Знайти покупців, які купували товари тільки тих постачальників, товари яких купував певний покупець
+% z04_customers_just_providers_of_given_customer(?Integer, ?Integer, ?String)
+% Використання:
+% 1) За кодом певного покупця GivenCustomerCode знайти коди CustomerCode та прізвища CustomerSurname
+% всіх покупців, які купували товари тільки тих постачальників, товари яких купував певний покупець:
+% z04_customers_just_providers_of_given_customer(+GivenCustomerCode,-CustomerCode,-CustomerSurname).
+% 2) За кодом покупця CustomerCode та прізвищем CustomerSurname визначити код певного покупця
+% GivenCustomerCode, який купив товари тільки тих постачальників, товари яких купував покупець:
+% z04_customers_just_providers_of_given_customer(-GivenCustomerCode,+CustomerCode,+CustomerSurname).
+% 3) За кодом певного покупця GivenCustomerCode знайти коди CustomerCode всіх покупців, які
+% купували товари тільки тих постачальників, товари яких купував певний покупець:
+% z04_customers_just_providers_of_given_customer(+GivenCustomerCode,-CustomerCode,_).
+% 4) Перевірити, що покупець з кодом CustomerCode та прізвищем CustomerCode купував товари тільки тих
+% постачальників, товари яких купував певний покупець з кодом GivenCustomerCode:
+% z04_customers_just_providers_of_given_customer(+GivenCustomerCode,+CustomerCode,+CustomerSurname).
 z04_customers_just_providers_of_given_customer(GivenCustomerCode,CustomerCode,CustomerSurname) :-
                        distinct(customers_just_providers_of_given_customer(GivenCustomerCode,CustomerCode,CustomerSurname)).
-% Приклад 1
+% Приклад 1: z04_customers_just_providers_of_given_customer(+GivenCustomerCode,-CustomerCode,-CustomerSurname)
 % ?- z04_customers_just_providers_of_given_customer('000000003',CustomerCode,CustomerSurname).
 % CustomerCode = '000000004',
 % CustomerSurname = 'Chaplyk' ;
@@ -494,11 +545,14 @@ z04_customers_just_providers_of_given_customer(GivenCustomerCode,CustomerCode,Cu
 % CustomerSurname = 'Salnikov' ;
 % CustomerCode = '000000014',
 % CustomerSurname = 'Hryhorenko' ;
-% Приклад 2
+% Приклад 2: z04_customers_just_providers_of_given_customer(-GivenCustomerCode,+CustomerCode,+CustomerSurname)
 % ?- z04_customers_just_providers_of_given_customer(GivenCustomerCode,'000000014','Hryhorenko').
 % GivenCustomerCode = '000000000' ;
 % GivenCustomerCode = '000000003' ;
 % GivenCustomerCode = '000000007' ;
-% Приклад 3
+% Приклад 3: z04_customers_just_providers_of_given_customer(+GivenCustomerCode,+CustomerCode,_)
+% ?- z04_customers_just_providers_of_given_customer('000000004',CustomerCode,_).
+% CustomerCode = '000000006' ;
+% Приклад 4: z04_customers_just_providers_of_given_customer(+GivenCustomerCode,+CustomerCode,+CustomerSurname)
 % ?- z04_customers_just_providers_of_given_customer('000000003','000000014','Hryhorenko').
 % true ;
