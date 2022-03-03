@@ -44,4 +44,20 @@ public class Provider {
         this.address = address;
         this.contacts = contacts;
     }
+
+    public Provider(Long edrpou, String name, Address address, Contacts contacts) {
+        this.edrpou = edrpou;
+        this.name = name;
+        this.address = address;
+        this.contacts = contacts;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Provider)) return false;
+        Provider provider = (Provider) o;
+        return getEdrpou().equals(provider.getEdrpou()) && getName().equals(provider.getName()) &&
+                getAddress().equals(provider.getAddress()) && getContacts().equals(provider.getContacts());
+    }
 }

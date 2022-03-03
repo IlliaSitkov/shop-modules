@@ -52,4 +52,14 @@ public class Product {
         this.provider = provider;
         this.category = category;
     }
+
+    public Product(Long articul, String name, String description, int quantity, double price, Provider provider, Category category) {
+        this.articul = articul;
+        this.name = name;
+        this.description = description;
+        this.quantity = quantity;
+        this.price = price;
+        this.provider = provider;
+        this.category = category;
+    }
 }

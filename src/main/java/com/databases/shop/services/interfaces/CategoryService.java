@@ -18,7 +18,6 @@ public interface CategoryService {
     Category updateCategoryNoCheck(Category category);
     Category getCategoryById(Long id); // throws CategoryNotFoundException;
 
-    Iterable<Category> getCategoryByPartName(String name) throws Exception;
     //Category getCategoryByName(String name) throws Exception;
     Iterable<Category> getAll();
 }

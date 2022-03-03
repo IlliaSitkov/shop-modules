@@ -1,13 +1,24 @@
 package com.databases.shop.services.implementations;
 
+import com.databases.shop.exceptions.category.CategoryIllegalArgumentException;
+import com.databases.shop.exceptions.provider.ProviderIllegalArgumentException;
 import com.databases.shop.models.Address;
+import com.databases.shop.models.Category;
 import com.databases.shop.models.Contacts;
 import com.databases.shop.models.Provider;
+import com.databases.shop.repositories.ProviderRepository;
 import com.databases.shop.services.interfaces.ProviderService;
+import com.databases.shop.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProviderServiceImpl implements ProviderService {
+
+    @Autowired
+    ProviderRepository providerRepository;
+    @Autowired
+    private Utils utils;
 
     @Override
     public Provider addProvider(String name, Address address, Contacts contacts) {
@@ -46,11 +57,6 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public Provider getProviderById(Long edrpou) {
-        return null;
-    }
-
-    @Override
-    public Iterable<Provider> getProviderByPartName(String name) throws Exception {
         return null;
     }
 

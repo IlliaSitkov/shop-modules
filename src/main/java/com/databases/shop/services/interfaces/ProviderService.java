@@ -18,7 +18,6 @@ public interface ProviderService {
     Provider updateProviderNoCheck(Provider provider);
     Provider getProviderById(Long edrpou); // throws ProviderNotFoundException;
 
-    Iterable<Provider> getProviderByPartName(String name) throws Exception;
     //Provider getProviderByName(String name) throws Exception;
     Iterable<Provider> getAll();
 }
