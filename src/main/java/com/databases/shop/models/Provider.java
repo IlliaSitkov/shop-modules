@@ -1,6 +1,8 @@
 package com.databases.shop.models;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -10,6 +12,8 @@ import java.util.Set;
 
 @Entity
 @Getter
+@Setter
+@NoArgsConstructor
 @Table
 public class Provider {
 
@@ -34,4 +38,10 @@ public class Provider {
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Product> products;
+
+    public Provider(String name, Address address, Contacts contacts) {
+        this.name = name;
+        this.address = address;
+        this.contacts = contacts;
+    }
 }

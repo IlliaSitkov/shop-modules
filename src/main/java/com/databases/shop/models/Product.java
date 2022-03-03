@@ -1,6 +1,8 @@
 package com.databases.shop.models;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -8,6 +10,8 @@ import javax.validation.constraints.NotNull;
 // product(articul, name, description, quantity, price, edrpou, cat_number).
 @Entity
 @Getter
+@Setter
+@NoArgsConstructor
 @Table
 public class Product {
 
@@ -40,4 +44,12 @@ public class Product {
     @JoinColumn(name = "category_fk", nullable = false)
     private Category category;
 
+    public Product(String name, String description, int quantity, double price, Provider provider, Category category) {
+        this.name = name;
+        this.description = description;
+        this.quantity = quantity;
+        this.price = price;
+        this.provider = provider;
+        this.category = category;
+    }
 }

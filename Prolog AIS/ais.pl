@@ -362,9 +362,18 @@ categories_only_all_those(CategoryCode,GoodCategoryCode):-
 %C = 5 ;
 %false.
 
-
+:-op(300, xfy, plays).
+:- op(200, xfy, and).
+jimmy plays football and squash.
+susan plays tennis and basketball and valleyball.
+vasyl plays tennis and basketball and valleyball.
 
 % ----------------------------------------------
+% :- op(300, xfy, is_income_from_product).
+% 960 is_income_from_product "Embroidery with flowers".
+
+% What is_income_from_product "Acrilic"
+
 % Список кількостей товару з рядків замовлення
 list_of_quantities(Articul, Quantity) :- order_row(_, Articul, Quantity).
 
@@ -422,6 +431,9 @@ z05_income_from_product(ProductName, Income) :- product(Articul, ProductName, _,
 % Приклад 4: z05_income_from_product(+ProductName, +Income)
 % ?- z05_income_from_product("Tape", 310).
 % true.
+
+% Income is_income_from_product z05_income_from_product("Embroidery with flowers", Income).
+
 
 %------------------------------------------------
 % Постачальники, чиї товари продав продавець
