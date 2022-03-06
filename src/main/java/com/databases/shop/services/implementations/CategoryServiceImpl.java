@@ -21,7 +21,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category addCategory(String name, String description) {
-        name = utils.processName(name);
+        name = utils.processString(name);
         utils.checkName(name);
         Iterable<Category> categoryWithSuchName = categoryRepository.findByName(name);
         if (categoryWithSuchName.iterator().hasNext())
@@ -49,7 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category updateCategory(Long id, String name, String description) {
-        name = utils.processName(name);
+        name = utils.processString(name);
         utils.checkName(name);
 
         Iterable<Category> categoriesWithSuchName = categoryRepository.findByNameAndNotId(id, name);

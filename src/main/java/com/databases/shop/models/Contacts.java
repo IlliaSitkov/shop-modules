@@ -2,6 +2,7 @@ package com.databases.shop.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 @Embeddable
 @Getter
 @Setter
+@NoArgsConstructor
 @EqualsAndHashCode
 public class Contacts {
 
@@ -24,4 +26,9 @@ public class Contacts {
     @Max(50)
     @Column(name = "contacts_email")
     private String email;
+
+    public Contacts(String phoneNumber, String email) {
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
 }

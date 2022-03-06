@@ -1,4 +1,4 @@
-package com.databases.shop.exceptions;
+package com.databases.shop.exceptions.strings;
 
 public class InvalidNameException extends RuntimeException {
 

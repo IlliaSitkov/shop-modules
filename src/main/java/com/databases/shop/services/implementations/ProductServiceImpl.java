@@ -23,7 +23,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product addProduct(String name, String description, int quantity, double price, Provider provider, Category category) {
-        name = utils.processName(name);
+        name = utils.processString(name);
         utils.checkName(name);
         utils.checkQuantOfProduct(quantity);
         utils.checkPriceOfProduct(price);
@@ -55,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product updateProduct(Long articul, String name, String description, int quantity,
                                  double price, Provider provider, Category category) {
-        name = utils.processName(name);
+        name = utils.processString(name);
         utils.checkName(name);
         utils.checkQuantOfProduct(quantity);
         utils.checkPriceOfProduct(price);
