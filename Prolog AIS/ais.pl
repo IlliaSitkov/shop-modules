@@ -272,8 +272,20 @@ categories_h1(CategoryCode,ResCategoryCode):-
     category_has_customer(ResCategoryCode,Customer),
     CategoryCode =\= ResCategoryCode.
 
+:- op(600,xfx,has_at_least_one_common_customer_with_category).
+:- op(590,xfx,category_with_code).
+
+
+
+category_with_code(Name,CategoryCode):-
+    category(CategoryCode,Name,_).
+
+
 z01_categories_at_least_one(CategoryCode,ResCategoryCode):-
     distinct(categories_h1(CategoryCode,ResCategoryCode)).
+
+has_at_least_one_common_customer_with_category(ResCategoryCode,CategoryCode):-
+    z01_categories_at_least_one(CategoryCode,ResCategoryCode).
 
 % -------------------------------------------------------------
 
