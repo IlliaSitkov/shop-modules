@@ -637,30 +637,14 @@ z03_customers_only_all_not_those(CustomerCode,GoodCustomerCode):-
     customers_all_not_those(CustomerCode,GoodCustomerCode), % знаходимо покупців, які купили товари усіх не тих постачальників, товари яких купив певний покупець
     not(bad_customers_bought_one(CustomerCode,GoodCustomerCode)). % від знайдних покупців віднімаємо поганих покупців
 
-% 3. Знайти покупців, які купили товари усіх не тих і тільки таких постачальників, товари яких купив певний покупець.
-% (у вигляді оператора)
-has_only_all_not_those_providers_who_provide_to_customer(GoodCustomerCode,CustomerCode):-
-    z03_customers_only_all_not_those(CustomerCode,GoodCustomerCode).
-
-% Визначення оператора для запиту 3
-:- op(600,xfx,has_only_all_not_those_providers_who_provide_to_customer).
-
 % ----- Призначення 1: знайти покупців, які купили товари усіх не тих і тільки таких постачальників, товари яких купив певний покупець
 % z03_customers_only_all_not_those(+CustomerCode,-GoodCustomerCode) або z03_customers_only_all_not_those(-CustomerCode,+GoodCustomerCode)
 % Тести:
 
-% ---------
 %?- z03_customers_only_all_not_those('000000006',Customer).
 %Customer = '000000002' ;
 %Customer = '000000011' ;
 %false.
-
-%?- Customer has_only_all_not_those_providers_who_provide_to_customer '000000006'.
-%Customer = '000000002' ;
-%Customer = '000000011' ;
-%false.
-
-% ---------
 
 %?- z03_customers_only_all_not_those('000000011',Customer).
 %Customer = '000000006' ;
@@ -682,13 +666,8 @@ has_only_all_not_those_providers_who_provide_to_customer(GoodCustomerCode,Custom
 % z03_customers_only_all_not_those(+CustomerCode,+GoodCustomerCode)
 % Тести:
 
-% ---------
 %?- z03_customers_only_all_not_those('000000004','000000012').
 %true.
-
-%?- '000000012' has_only_all_not_those_providers_who_provide_to_customer '000000004'.
-%true.
-% ---------
 
 %?- z03_customers_only_all_not_those('000000013','000000000').
 %true.
@@ -730,32 +709,180 @@ has_only_all_not_those_providers_who_provide_to_customer(GoodCustomerCode,Custom
 %GoodCustomerCode = '000000013' ;
 %false.
 
-%?- GoodCustomerCode has_only_all_not_those_providers_who_provide_to_customer CustomerCode.
-%GoodCustomerCode = '000000000',
-%CustomerCode = '000000013' ;
-%GoodCustomerCode = '000000002',
-%CustomerCode = '000000006' ;
-%GoodCustomerCode = '000000004',
-%CustomerCode = '000000012' ;
-%GoodCustomerCode = '000000006',
-%CustomerCode = '000000002' ;
-%GoodCustomerCode = '000000006',
-%CustomerCode = '000000011' ;
-%GoodCustomerCode = '000000007',
-%CustomerCode = '000000013' ;
-%GoodCustomerCode = '000000008',
-%CustomerCode = '000000010' ;
-%GoodCustomerCode = '000000010',
-%CustomerCode = '000000008' ;
-%GoodCustomerCode = '000000011',
-%CustomerCode = '000000006' ;
-%GoodCustomerCode = '000000012',
-%CustomerCode = '000000004' ;
-%GoodCustomerCode = '000000013',
-%CustomerCode = '000000000' ;
-%GoodCustomerCode = '000000013',
-%CustomerCode = '000000007' ;
+
+
+
+
+% --- Запис розширеного запиту 3 у вигляді оператора ----------------------------------------------------------------
+% визначення повного імені покупця за його кодом
+with_full_name(C,Name):-
+    customer(C,Name,_,_).
+
+% визначення області проживання покупця за кодом та іменем
+who_lives_in_region(with_full_name(C,Name),Region):-
+    customer(C,Name,address(_,Region,_,_,_),_).
+
+% 3. Знайти покупців, їхнє повне імʼя та область, які купили товари усіх не тих і тільки таких постачальників, товари яких купив певний покупець з певним повним іменем
+% (у вигляді оператора)
+has_only_all_not_those_providers_who_provide_to_customer(who_lives_in_region(with_full_name(GoodCustomerCode,Name),Region),with_full_name(CustomerCode,Name1)):-
+    z03_customers_only_all_not_those(CustomerCode,GoodCustomerCode),
+    who_lives_in_region(with_full_name(GoodCustomerCode,Name),Region),
+    with_full_name(CustomerCode,Name1).
+
+% Визначення оператора для запиту 3
+:- op(600,xfx,f_has_only_all_not_those_providers_who_provide_to_customer).
+:- op(500,xfx,with_full_name).
+:- op(550,xfx,who_lives_in_region).
+
+
+% ----- Призначення: знайти покупців, їхнє повне імʼя та область, які купили товари усіх не тих і тільки таких постачальників, товари яких купив певний покупець з певним повним іменем
+% ?GoodCustomerCode with_full_name ?Name who_lives_in_region ?Region has_only_all_not_those_providers_who_provide_to_customer ?CustomerCode with_full_name ?Name1.
+
+% значення параметрів можна частково конкретизувати для здійснення фільтрування результатів за певною областю покупців, за їхнім прізвищем,
+% іменем, по батькові
+
+% Тести:
+
+% конкретизована назва області (фільтрування результатів за областю покупця)
+% -GoodCustomerCode with_full_name -Name who_lives_in_region +Region has_only_all_not_those_providers_who_provide_to_customer -CustomerCode with_full_name -Name1.
+
+%?- C with_full_name Name who_lives_in_region 'Lviv' has_only_all_not_those_providers_who_provide_to_customer C1 with_full_name N.
+%C = '000000010',
+%Name = full_name('Titov', 'Roman', 'Dmytrovych'),
+%C1 = '000000008',
+%N = full_name('Andrushchenko', 'Stepan', 'Maksymovych') ;
 %false.
+
+
+% частково конкретизоване імʼя покупця (фільтрування результатів за іменем даного покупця)
+% -GoodCustomerCode with_full_name -Name who_lives_in_region -Region has_only_all_not_those_providers_who_provide_to_customer -CustomerCode with_full_name +Name1.
+
+%?- C with_full_name Name who_lives_in_region Region has_only_all_not_those_providers_who_provide_to_customer C1 with_full_name full_name(_,'Nina',_).
+%C = '000000006',
+%Name = full_name('Vaha', 'Ludmila', 'Oleksiivna'),
+%Region = 'Zaporizhzhia',
+%C1 = '000000002' ;
+%false.
+
+
+% частково конкретизоване імʼя покупця (фільтрування результатів за прізвищем шуканого покупця)
+% -GoodCustomerCode with_full_name +Name who_lives_in_region -Region has_only_all_not_those_providers_who_provide_to_customer -CustomerCode with_full_name -Name1.
+
+%?- C with_full_name full_name('Titov',_,_) who_lives_in_region Region has_only_all_not_those_providers_who_provide_to_customer C1 with_full_name Name.
+%C = '000000010',
+%Region = 'Lviv',
+%C1 = '000000008',
+%Name = full_name('Andrushchenko', 'Stepan', 'Maksymovych') ;
+%false.
+
+
+% пошук лише областей, де живуть ті покупці, які нас цікавлять
+% -GoodCustomerCode with_full_name -Name who_lives_in_region -Region has_only_all_not_those_providers_who_provide_to_customer +CustomerCode with_full_name -Name1.
+
+%?- _ with_full_name _ who_lives_in_region Region has_only_all_not_those_providers_who_provide_to_customer '000000006' with_full_name _.
+%Region = 'Donetsk' ;
+%Region = 'Dnipro' ;
+%false.
+
+
+
+
+% --- Приклади використання ператорів ----------------------------------------------------------------
+
+% ----- Призначення: знайти покупців з певної області, з певним повним іменем та кодом
+% ?Customer with_full_name ?Name who_lives_in_region ?Region.
+
+% Тести:
+
+% 1. Пошук усіх імен покупців, їхніх кодів та областей проживання
+% -Customer with_full_name -Name who_lives_in_region -Region.
+
+%?- Customer with_full_name Name who_lives_in_region Region.
+%Customer = '000000000',
+%Name = full_name('Petrenko', 'Roman', 'Stepanovych'),
+%Region = 'Kharkiv' ;
+%Customer = '000000001',
+%Name = full_name('Vasylenko', 'Andriy', 'Vasyliovych'),
+%Region = 'Chernihiv' ;
+%Customer = '000000002',
+%Name = full_name('Sedash', 'Nina', 'Yuriivna'),
+%Region = 'Donetsk' ;
+%Customer = '000000003',
+%Name = full_name('Trubeko', 'Tetyana', 'Vasylivna'),
+%Region = 'Vinnytsia' ;
+%Customer = '000000004',
+%Name = full_name('Chaplyk', 'Dmytro', 'Vasyliovych'),
+%Region = 'Vinnytsia' ;
+%Customer = '000000005',
+%Name = full_name('Volkov', 'Valentyn', 'Romanovych'),
+%Region = 'Odesa' ;
+%Customer = '000000006',
+%Name = full_name('Vaha', 'Ludmila', 'Oleksiivna'),
+%Region = 'Zaporizhzhia' ;
+%Customer = '000000007',
+%Name = full_name('Zayarniy', 'Oleksandr', 'Hryhorovych'),
+%Region = 'Kyiv' ;
+%Customer = '000000008',
+%Name = full_name('Andrushchenko', 'Stepan', 'Maksymovych'),
+%Region = 'Donetsk' ;
+%Customer = '000000009',
+%Name = full_name('Salnikov', 'Myhaylo', 'Serhiyovych'),
+%Region = 'Lviv' ;
+%Customer = '000000010',
+%Name = full_name('Titov', 'Roman', 'Dmytrovych'),
+%Region = 'Lviv' ;
+%Customer = '000000011',
+%Name = full_name('Lagutkova', 'Elizavetta', 'Serhiivna'),
+%Region = 'Dnipro' ;
+%Customer = '000000012',
+%Name = full_name('Grinev', 'Pavlo', 'Oleksandrovych'),
+%Region = 'Kyiv' ;
+%Customer = '000000013',
+%Name = full_name('Zozulia', 'Ivan', 'Ivanovych'),
+%Region = 'Mykolaiv' ;
+%Customer = '000000014',
+%Name = full_name('Hryhorenko', 'David', 'Romanovych'),
+%Region = 'Donetsk'.
+
+
+% 2. Пошук усіх імен покупців, їхніх кодів за певною областю проживання
+% -Customer with_full_name -Name who_lives_in_region +Region.
+
+%?- Customer with_full_name Name who_lives_in_region 'Donetsk'.
+%Customer = '000000002',
+%Name = full_name('Sedash', 'Nina', 'Yuriivna') ;
+%Customer = '000000008',
+%Name = full_name('Andrushchenko', 'Stepan', 'Maksymovych') ;
+%Customer = '000000014',
+%Name = full_name('Hryhorenko', 'David', 'Romanovych').
+
+
+% 3. Пошук кодів покупців та областей за певним іменем
+% -Customer with_full_name +Name who_lives_in_region -Region.
+
+%?- Customer with_full_name full_name('Petrenko',_,_) who_lives_in_region Region.
+%Customer = '000000000',
+%Region = 'Kharkiv' ;
+%false.
+
+%?- Customer with_full_name full_name(_,_,'Serhiivna') who_lives_in_region Region.
+%Customer = '000000011',
+%Region = 'Dnipro' ;
+%false.
+
+
+% 4. Пошук повних імен покупців та їхніх областей за кодом покупця
+% +Customer with_full_name -Name who_lives_in_region -Region.
+
+%?- '000000012' with_full_name Name who_lives_in_region Region.
+%Name = full_name('Grinev', 'Pavlo', 'Oleksandrovych'),
+%Region = 'Kyiv'.
+
+%?- '000000007' with_full_name Name who_lives_in_region Region.
+%Name = full_name('Zayarniy', 'Oleksandr', 'Hryhorovych'),
+%Region = 'Kyiv'.
+
+
 
 
 % --- Запит 6 ----------------------------------------------------------
@@ -1050,32 +1177,3 @@ z04_customers_just_providers_of_given_customer(GivenCustomerCode,CustomerCode,Cu
 % Приклад 4: z04_customers_just_providers_of_given_customer(+GivenCustomerCode,+CustomerCode,+CustomerSurname)
 % ?- z04_customers_just_providers_of_given_customer('000000003','000000014','Hryhorenko').
 % true ;
-
-
-
-
-
-
-
-
-
-% предикат покупець(іпн,піб,адреса,контакти)
-
-:- op(500,xfx,with_surname).
-:- op(505,xfx,with_name).
-
-with_surname(Code,Surname):-
-    customer(Code,full_name(Surname,_,_),_,_).
-
-with_name(with_surname(Code,Surname),Name):-
-    customer(Code,full_name(Surname,Name,_),_,_).
-
-
-
-
-
-
-
-
-
-
