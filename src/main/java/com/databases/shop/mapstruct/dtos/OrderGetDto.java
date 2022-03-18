@@ -1,6 +1,10 @@
-package com.databases.shop.models;
+package com.databases.shop.mapstruct.dtos;
 
-import lombok.Getter;
+import com.databases.shop.models.Customer;
+import com.databases.shop.models.OrderStatus;
+import com.databases.shop.models.ProductInOrder;
+import com.databases.shop.models.Salesman;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -9,20 +13,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Getter
-@Table(name = "order_t")
-public class Order {
+public class OrderGetDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonProperty("id")
     private Long id;
 
-    @ManyToOne
-    private Salesman salesman;
-
-    @ManyToOne
-    private Customer customer;
+//    @JsonProperty("customer")
+//    private CustomerGetDto customer;
 
     @OneToMany(mappedBy = "order")
     private Set<ProductInOrder> products = new HashSet<>();
@@ -38,6 +35,7 @@ public class Order {
     @Min(0)
     @Column(name = "order_cost")
     private double cost;
+
 
 
 }

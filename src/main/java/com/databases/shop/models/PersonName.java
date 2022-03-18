@@ -1,6 +1,7 @@
 package com.databases.shop.models;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 
 @Embeddable
 @Getter
+@Setter
 public class PersonName {
 
     @NotBlank
@@ -25,4 +27,12 @@ public class PersonName {
     @Max(15)
     private String surname;
 
+    public PersonName(@NotBlank @Max(15) String name, @Max(15) String lastName, @NotBlank @Max(15) String surname) {
+        this.name = name;
+        this.lastName = lastName;
+        this.surname = surname;
+    }
+
+    public PersonName() {
+    }
 }

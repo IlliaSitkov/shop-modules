@@ -3,6 +3,7 @@ package com.databases.shop.models;
 import lombok.Getter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,5 +30,9 @@ public class Customer {
     @NotNull
     @Embedded
     private Contacts contacts;
+
+    @NotBlank
+    @Column(name = "customer_password")
+    private String password;
 
 }
