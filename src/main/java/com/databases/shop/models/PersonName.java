@@ -20,16 +20,16 @@ public class PersonName {
 
     @Column(name = "person_lastname")
     @Max(15)
-    private String lastName;
+    private String lastname;
 
     @NotBlank
     @Column(name = "person_surname")
     @Max(15)
     private String surname;
 
-    public PersonName(@NotBlank @Max(15) String name, @Max(15) String lastName, @NotBlank @Max(15) String surname) {
+    public PersonName(@NotBlank @Max(15) String name, @Max(15) String lastname, @NotBlank @Max(15) String surname) {
         this.name = name;
-        this.lastName = lastName;
+        this.lastname = lastname;
         this.surname = surname;
     }
 

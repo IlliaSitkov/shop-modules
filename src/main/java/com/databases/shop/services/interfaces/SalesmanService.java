@@ -13,5 +13,9 @@ public interface SalesmanService {
 
     Salesman update(Long id, Salesman salesman);
 
+    boolean usersWithEmailExist(String email);
+
+//    Iterable<Salesman> haveGEDoneOrderQuantity(int quantity);
+
     void delete(Long id);
 }

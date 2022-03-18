@@ -29,12 +29,13 @@ public class Utils {
     }
 
     public PersonName processPersonName(PersonName personName) {
-        return new PersonName(processString(personName.getName()),processString(personName.getLastName()),processString(personName.getSurname()));
+        String lastname = personName.getLastname() == null ? null : processString(personName.getLastname());
+        return new PersonName(processString(personName.getName()),lastname,processString(personName.getSurname()));
     }
 
     public void checkPersonName(PersonName personName) {
         if (isInvalidName(personName.getName()) ||
-                isInvalidName(personName.getLastName()) ||
+//                isInvalidName(personName.getLastname()) ||
                 isInvalidName(personName.getSurname())) {
             throw new InvalidNameException(Values.INVALID_NAME);
         }
@@ -68,7 +69,7 @@ public class Utils {
     public boolean isInvalidContacts(Contacts contacts) {
         return contacts.getPhoneNumber().isEmpty() || contacts.getEmail().isEmpty()
                 || !isValidPhoneNumber(contacts.getPhoneNumber())
-                || !contacts.getEmail().matches("[\\w-.]+@([\\w-]+.)+[\\w-]{2,4}");
+                || !contacts.getEmail().matches("[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}");
     }
 
     public boolean isValidPhoneNumber(String phone) {

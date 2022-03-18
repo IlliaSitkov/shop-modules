@@ -11,5 +11,4 @@ public class ContactsPutDto {
 
     @JsonProperty("phoneNumber")
     private String phoneNumber;
-
 }

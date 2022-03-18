@@ -3,6 +3,7 @@ package com.databases.shop.services.implementations;
 import com.databases.shop.exceptions.salesman.NoSalesmanWithSuchIdException;
 import com.databases.shop.exceptions.salesman.SalesmanWithEmailAlreadyExistsException;
 import com.databases.shop.models.Salesman;
+import com.databases.shop.repositories.CustomerRepository;
 import com.databases.shop.repositories.SalesmanRepository;
 import com.databases.shop.services.interfaces.SalesmanService;
 import com.databases.shop.utils.Utils;
@@ -15,6 +16,9 @@ public class SalesmanServiceImpl implements SalesmanService {
 
     @Autowired
     private SalesmanRepository salesmanRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Autowired
     private Utils utils;
@@ -34,7 +38,7 @@ public class SalesmanServiceImpl implements SalesmanService {
         utils.processSalesman(salesman);
         utils.checkPersonName(salesman.getPersonName());
         utils.checkContacts(salesman.getContacts());
-        if (salesmanRepository.existsByEmail(salesman.getContacts().getEmail())) {
+        if (usersWithEmailExist(salesman.getContacts().getEmail())) {
             throw new SalesmanWithEmailAlreadyExistsException(salesman.getContacts().getEmail());
         }
         return salesmanRepository.save(salesman);
@@ -50,6 +54,12 @@ public class SalesmanServiceImpl implements SalesmanService {
         s.setPersonName(salesman.getPersonName());
         s.getContacts().setPhoneNumber(salesman.getContacts().getPhoneNumber());
         return salesmanRepository.save(s);
+    }
+
+    @Override
+    public boolean usersWithEmailExist(String email) {
+        return salesmanRepository.existsByEmail(email) ||
+                customerRepository.existsByEmail(email);
     }
 
     @Override
