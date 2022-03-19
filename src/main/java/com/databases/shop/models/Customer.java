@@ -31,8 +31,4 @@ public class Customer {
     @Embedded
     private Contacts contacts;
 
-    @NotBlank
-    @Column(name = "customer_password")
-    private String password;
-
 }

@@ -7,14 +7,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Getter
 @Setter
 @ToString
-public class SalesmanPostDto {
+public class SalesmanSaveDto {
 
     @JsonProperty("full_name")
     @NotNull
@@ -23,13 +21,5 @@ public class SalesmanPostDto {
     @JsonProperty("contacts")
     @NotNull
     private Contacts contacts;
-
-    @JsonProperty("password")
-    @NotNull
-    private String password;
-
-    @JsonProperty("role")
-    @NotNull
-    private String role;
 
 }
