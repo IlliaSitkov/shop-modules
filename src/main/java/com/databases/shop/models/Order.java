@@ -39,5 +39,4 @@ public class Order {
     @Column(name = "order_cost")
     private double cost;
 
-
 }

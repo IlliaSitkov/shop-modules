@@ -9,6 +9,7 @@ import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
 import com.databases.shop.mapstruct.mappers.SalesmanMapper;
 import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.CustomerRepository;
+import com.databases.shop.repositories.SalesmanFilterRepository;
 import com.databases.shop.repositories.SalesmanRepository;
 import com.databases.shop.repositories.queryinterfaces.MinMaxOrderCount;
 import com.databases.shop.repositories.queryinterfaces.MinMaxSalesmanIncome;
@@ -24,6 +25,9 @@ public class SalesmanServiceImpl implements SalesmanService {
 
     @Autowired
     private SalesmanRepository salesmanRepository;
+
+    @Autowired
+    private SalesmanFilterRepository salesmanFilterRepository;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -85,6 +89,11 @@ public class SalesmanServiceImpl implements SalesmanService {
         salesmanFilterBoundsDto.setMaxIncome(minMaxSalesmanIncome.getMaxIncome());
 
         return salesmanFilterBoundsDto;
+    }
+
+    @Override
+    public Iterable<Salesman> getFilteredSalesmen(double income, int orders, boolean hasAllCategories) {
+        return salesmanFilterRepository.filterSalesmen(income,orders,hasAllCategories);
     }
 
     @Override

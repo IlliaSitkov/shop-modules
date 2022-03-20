@@ -50,4 +50,40 @@ public interface SalesmanRepository extends JpaRepository<Salesman,Long> {
 
 
 
+//    @Query(value =
+//            "SELECT * \n" +
+//            "FROM salesman\n" +
+//            "WHERE NOT EXISTS (\n" +
+//            "        SELECT category.id\n" +
+//            "        FROM category\n" +
+//            "        WHERE NOT EXISTS(\n" +
+//            "                SELECT articul\n" +
+//            "                FROM product\n" +
+//            "                WHERE category_fk = category.id AND EXISTS(\n" +
+//            "                        SELECT product_articul\n" +
+//            "                        FROM product_in_order INNER JOIN order_t ot ON product_in_order.order_id = ot.id\n" +
+//            "                        WHERE status = 'DONE' AND product_articul = articul AND salesman_id = salesman.id\n" +
+//            "                    )\n" +
+//            "            )\n" +
+//            "    )\n" +
+//            "  AND id IN (\n" +
+//            "    SELECT salesman_id\n" +
+//            "    FROM order_t\n" +
+//            "    WHERE status = 'DONE'\n" +
+//            "    GROUP BY salesman_id\n" +
+//            "    HAVING COUNT(id) <= :order_num_val\n" +
+//            ")\n" +
+//            "  AND id IN (\n" +
+//            "    SELECT salesman_id\n" +
+//            "    FROM\n" +
+//            "        (SELECT salesman_id, prod_price*prod_quantity AS row_cost\n" +
+//            "         FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +
+//            "         WHERE status = 'DONE') AS RowCosts\n" +
+//            "    GROUP BY salesman_id\n" +
+//            "    HAVING SUM(row_cost) <= :income_val\n" +
+//            ")", nativeQuery = true)
+//    Iterable<Salesman> salesmanFilter(@Param("income_val") double income, @Param("order_num_val") int orderNum);
+
+
+
 }

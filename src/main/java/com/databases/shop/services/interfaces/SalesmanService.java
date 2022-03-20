@@ -25,5 +25,7 @@ public interface SalesmanService {
 
     SalesmanFilterBoundsDto getSalesmanFilterBounds();
 
+    Iterable<Salesman> getFilteredSalesmen(double income,int orders,boolean hasAllCategories);
+
 
 }

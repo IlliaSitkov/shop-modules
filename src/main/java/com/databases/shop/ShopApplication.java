@@ -1,5 +1,7 @@
 package com.databases.shop;
 
+import com.databases.shop.models.Salesman;
+import com.databases.shop.repositories.SalesmanFilterRepository;
 import com.databases.shop.repositories.SalesmanRepository;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -18,6 +20,9 @@ public class ShopApplication implements CommandLineRunner {
 
 	@Autowired
 	private SalesmanRepository salesmanRepository;
+
+	@Autowired
+	private SalesmanFilterRepository salesmanFilterRepository;
 
 
 	public static void main(String[] args) {
@@ -42,6 +47,10 @@ public class ShopApplication implements CommandLineRunner {
 //		System.out.println(minMaxOrderCount == null);
 //		System.out.println(minMaxOrderCount.getMinCount());
 //		System.out.println(minMaxOrderCount.getMaxCount());
+
+//		salesmanRepository.salesmanFilter(150,2).forEach(System.out::println);
+
+		salesmanFilterRepository.filterSalesmen(0,0,false).forEach(s -> System.out.println(s.getId()));
 
 	}
 }

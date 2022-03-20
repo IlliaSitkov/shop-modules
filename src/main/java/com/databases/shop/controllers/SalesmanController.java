@@ -6,6 +6,7 @@ import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPutDto;
 import com.databases.shop.mapstruct.mappers.SalesmanMapper;
+import com.databases.shop.models.Salesman;
 import com.databases.shop.services.interfaces.AdminService;
 import com.databases.shop.services.interfaces.SalesmanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,11 @@ public class SalesmanController {
     @GetMapping
     public Iterable<SalesmanGetDto> getAllSalesmen() {
         return salesmanMapper.salesmenToSalesmenGetDto(salesmanService.findAll());
+    }
+
+    @GetMapping("/filter")
+    public Iterable<SalesmanGetDto> getFilteredSalesmen(@RequestParam("income") double income, @RequestParam("orders") int orders, @RequestParam("allCategories") boolean hasAllCategories) {
+        return salesmanMapper.salesmenToSalesmenGetDto(salesmanService.getFilteredSalesmen(income,orders,hasAllCategories));
     }
 
     @PostMapping
