@@ -1,9 +1,12 @@
 package com.databases.shop.controllers;
 
+import com.databases.shop.exceptions.salesman.SalesmanRegistrationException;
+import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPutDto;
 import com.databases.shop.mapstruct.mappers.SalesmanMapper;
+import com.databases.shop.services.interfaces.AdminService;
 import com.databases.shop.services.interfaces.SalesmanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -21,6 +24,7 @@ public class SalesmanController {
     @Autowired
     private SalesmanService salesmanService;
 
+    @Autowired
     private SalesmanMapper salesmanMapper;
 
     @Autowired
@@ -36,8 +40,7 @@ public class SalesmanController {
 
     @PostMapping
     public SalesmanGetDto saveSalesman(@Valid @RequestBody SalesmanPostDto salesmanPostDto) {
-        return salesmanMapper.salesmanToSalesmanGetDto(
-                salesmanService.save(salesmanMapper.salesmanPostDtoToSalesman(salesmanPostDto)));
+        return salesmanService.saveSalesmanPostDto(salesmanPostDto);
     }
 
     @PutMapping("/{id}")
@@ -47,8 +50,8 @@ public class SalesmanController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSalesman(@PathVariable("id") Long id) {
-        salesmanService.delete(id);
+    public boolean deleteSalesman(@PathVariable("id") Long id) {
+        return salesmanService.delete(id);
     }
 
     @GetMapping("/email")
@@ -57,5 +60,9 @@ public class SalesmanController {
         return salesmanService.usersWithEmailExist(email);
     }
 
+    @GetMapping("/filterBounds")
+    public SalesmanFilterBoundsDto getFilterBounds() {
+        return salesmanService.getSalesmanFilterBounds();
+    }
 
 }

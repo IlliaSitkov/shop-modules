@@ -1,10 +1,18 @@
 package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.salesman.NoSalesmanWithSuchIdException;
+import com.databases.shop.exceptions.salesman.SalesmanRegistrationException;
 import com.databases.shop.exceptions.salesman.SalesmanWithEmailAlreadyExistsException;
+import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
+import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
+import com.databases.shop.mapstruct.mappers.SalesmanMapper;
 import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.CustomerRepository;
 import com.databases.shop.repositories.SalesmanRepository;
+import com.databases.shop.repositories.queryinterfaces.MinMaxOrderCount;
+import com.databases.shop.repositories.queryinterfaces.MinMaxSalesmanIncome;
+import com.databases.shop.services.interfaces.AdminService;
 import com.databases.shop.services.interfaces.SalesmanService;
 import com.databases.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +30,12 @@ public class SalesmanServiceImpl implements SalesmanService {
 
     @Autowired
     private Utils utils;
+
+    @Autowired
+    private SalesmanMapper salesmanMapper;
+
+    @Autowired
+    private AdminService adminService;
 
     @Override
     public Iterable<Salesman> findAll() {
@@ -44,6 +58,35 @@ public class SalesmanServiceImpl implements SalesmanService {
         return salesmanRepository.save(salesman);
     }
 
+    public SalesmanGetDto saveSalesmanPostDto(SalesmanPostDto salesmanPostDto) {
+        try {
+            adminService.registerUser(salesmanPostDto.getContacts().getEmail(),salesmanPostDto.getPassword());
+            adminService.saveUserToFirestore(salesmanPostDto.getContacts().getEmail(),salesmanPostDto.getRole());
+            return salesmanMapper.salesmanToSalesmanGetDto(
+                    save(salesmanMapper.salesmanSaveDtoToSalesman(
+                                    salesmanMapper.salesmanPostDtoToSalesmanSaveDto(salesmanPostDto))));
+
+        } catch (Exception e) {
+            throw new SalesmanRegistrationException();
+        }
+    }
+
+    @Override
+    public SalesmanFilterBoundsDto getSalesmanFilterBounds() {
+        MinMaxOrderCount minMaxOrderCount = salesmanRepository.minMaxOrderCount();
+        MinMaxSalesmanIncome minMaxSalesmanIncome = salesmanRepository.minMaxSalesmanIncome();
+
+        SalesmanFilterBoundsDto salesmanFilterBoundsDto = new SalesmanFilterBoundsDto();
+
+        salesmanFilterBoundsDto.setMinOrderCount(minMaxOrderCount.getMinCount());
+        salesmanFilterBoundsDto.setMaxOrderCount(minMaxOrderCount.getMaxCount());
+
+        salesmanFilterBoundsDto.setMinIncome(minMaxSalesmanIncome.getMinIncome());
+        salesmanFilterBoundsDto.setMaxIncome(minMaxSalesmanIncome.getMaxIncome());
+
+        return salesmanFilterBoundsDto;
+    }
+
     @Override
     public Salesman update(Long id, Salesman salesman) {
         salesman.setPersonName(utils.processPersonName(salesman.getPersonName()));
@@ -63,8 +106,20 @@ public class SalesmanServiceImpl implements SalesmanService {
     }
 
     @Override
-    public void delete(Long id) {
-        salesmanRepository.deleteById(id);
+    public boolean delete(Long id) {
+        if (salesmanRepository.existsById(id)) {
+            Salesman s = salesmanRepository.getById(id);
+            try {
+                adminService.deleteUserAccountByEmail(s.getContacts().getEmail());
+                adminService.deleteUserFromFirestore(s.getContacts().getEmail());
+                salesmanRepository.deleteById(id);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        };
+        return false;
+
     }
 
 

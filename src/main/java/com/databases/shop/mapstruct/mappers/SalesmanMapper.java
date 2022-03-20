@@ -3,7 +3,7 @@ package com.databases.shop.mapstruct.mappers;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPutDto;
-import com.databases.shop.models.Contacts;
+import com.databases.shop.mapstruct.dtos.salesman.SalesmanSaveDto;
 import com.databases.shop.models.Salesman;
 import org.mapstruct.Mapper;
 
@@ -14,11 +14,11 @@ public interface SalesmanMapper {
 
     Iterable<SalesmanGetDto> salesmenToSalesmenGetDto(Iterable<Salesman> salesmen);
 
-    Salesman salesmanPostDtoToSalesman(SalesmanPostDto salesmanPostDto);
+    SalesmanSaveDto salesmanPostDtoToSalesmanSaveDto(SalesmanPostDto salesmanPostDto);
 
     Salesman salesmanPutDtoToSalesman(SalesmanPutDto salesmanPutDto);
 
-
+    Salesman salesmanSaveDtoToSalesman(SalesmanSaveDto salesmanSaveDto);
 
 
 

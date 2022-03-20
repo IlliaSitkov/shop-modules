@@ -1,6 +1,8 @@
 package com.databases.shop.services.interfaces;
 
+import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
+import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
 import com.databases.shop.models.Salesman;
 
 public interface SalesmanService {
@@ -17,5 +19,11 @@ public interface SalesmanService {
 
 //    Iterable<Salesman> haveGEDoneOrderQuantity(int quantity);
 
-    void delete(Long id);
+    boolean delete(Long id);
+
+    SalesmanGetDto saveSalesmanPostDto(SalesmanPostDto salesmanPostDto);
+
+    SalesmanFilterBoundsDto getSalesmanFilterBounds();
+
+
 }

@@ -26,10 +26,6 @@ public class Salesman {
     @Embedded
     private Contacts contacts;
 
-    @NotBlank
-    @Column(name = "salesman_password")
-    private String password;
-
 
     @OneToMany(mappedBy = "salesman")
     private Set<Order> orders = new HashSet<>();
