@@ -7,13 +7,16 @@ import com.databases.shop.services.implementations.CategoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
+@Validated
 @RequestMapping("/categories")
 public class CategoryController {
 
@@ -32,7 +35,7 @@ public class CategoryController {
         return categoryService.getCategoryById(id);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     //@PreAuthorize("hasRole('ADMIN')")
     public void deleteCategory(@PathVariable("id") Long id) {
         categoryService.deleteCategory(id);

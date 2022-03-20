@@ -18,5 +18,5 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
     @Query("SELECT p " +
             "FROM Provider p " +
             "WHERE LOWER(p.name) LIKE LOWER( :name) AND NOT p.edrpou = :edrpou")
-    Iterable<Provider> findByNameAndNotEdrpou(@Param("edrpou") long edrpou, @Param("edrpou") String name);
+    Iterable<Provider> findByNameAndNotEdrpou(@Param("edrpou") long edrpou, @Param("name") String name);
 }

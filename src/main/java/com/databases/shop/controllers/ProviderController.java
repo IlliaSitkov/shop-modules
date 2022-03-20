@@ -7,13 +7,16 @@ import com.databases.shop.services.implementations.ProviderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
+@Validated
 @RequestMapping("/providers")
 public class ProviderController {
 
@@ -32,7 +35,7 @@ public class ProviderController {
         return providerService.getProviderByEdrpou(edrpou);
     }
 
-    @DeleteMapping("/delete/{edrpou}")
+    @DeleteMapping("/{edrpou}")
     //@PreAuthorize("hasRole('ADMIN')")
     public void deleteProvider(@PathVariable("edrpou") Long edrpou) {
         providerService.deleteProvider(edrpou);

@@ -7,13 +7,16 @@ import com.databases.shop.services.implementations.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
+@Validated
 @RequestMapping("/products")
 public class ProductController {
 
@@ -32,7 +35,7 @@ public class ProductController {
         return productService.getProductByArticul(articul);
     }
 
-    @DeleteMapping("/delete/{articul}")
+    @DeleteMapping("/{articul}")
     //@PreAuthorize("hasRole('ADMIN')")
     public void deleteProduct(@PathVariable("articul") Long articul) {
         productService.deleteProduct(articul);
