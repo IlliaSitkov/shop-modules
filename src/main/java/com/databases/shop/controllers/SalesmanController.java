@@ -1,6 +1,7 @@
 package com.databases.shop.controllers;
 
 import com.databases.shop.exceptions.salesman.SalesmanRegistrationException;
+import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPutDto;
@@ -59,5 +60,9 @@ public class SalesmanController {
         return salesmanService.usersWithEmailExist(email);
     }
 
+    @GetMapping("/filterBounds")
+    public SalesmanFilterBoundsDto getFilterBounds() {
+        return salesmanService.getSalesmanFilterBounds();
+    }
 
 }
