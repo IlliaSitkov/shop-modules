@@ -52,7 +52,7 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
     @Query(value =
             "SELECT *\n" +
             "FROM provider\n" +
-            "WHERE (SELECT SUM(prod_quantity)\n" +
+            "WHERE :quantity <= (SELECT COALESCE(SUM(prod_quantity),0)\n" +
                                 "FROM product_in_order\n" +
                                 "WHERE order_id IN(\n" +
                                     "SELECT order_id\n" +
@@ -61,7 +61,7 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
                                 "AND product_articul IN(\n" +
                                     "SELECT articul\n" +
                                     "FROM product\n" +
-                                    "WHERE provider_fk = edrpou))) >= :quantity", nativeQuery = true)
+                                    "WHERE provider_fk = edrpou)))", nativeQuery = true)
     Iterable<Provider> findHavingQuantityOfProductsSoldBigger(@Param("quantity") int quantity);
 
     @Query(value =
@@ -109,7 +109,7 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
                                         "SELECT edrpou\n" +
                                         "FROM provider\n" +
                                         "WHERE name = :name)))))))\n" +
-            "AND :quantity <= (SELECT SUM(prod_quantity)\n" +
+            "AND :quantity <= (SELECT COALESCE(SUM(prod_quantity),0)\n" +
                                "FROM product_in_order\n" +
                                "WHERE order_id IN(\n" +
                                     "SELECT order_id\n" +

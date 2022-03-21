@@ -3,7 +3,6 @@ package com.databases.shop.mapstruct.mappers;
 import com.databases.shop.mapstruct.dtos.provider.ProviderGetDto;
 import com.databases.shop.mapstruct.dtos.provider.ProviderPostDto;
 import com.databases.shop.mapstruct.dtos.provider.ProviderPutDto;
-import com.databases.shop.mapstruct.dtos.provider.ProviderSaveDto;
 import com.databases.shop.models.Provider;
 import org.mapstruct.Mapper;
 
@@ -14,9 +13,7 @@ public interface ProviderMapper {
 
     Iterable<ProviderGetDto> providersToProvidersGetDto(Iterable<Provider> providers);
 
-    ProviderSaveDto providerPostDtoToProviderSaveDto(ProviderPostDto providerPostDto);
-
     Provider providerPutDtoToProvider(ProviderPutDto providerPutDto);
 
-    Provider providerSaveDtoToProvider(ProviderSaveDto providerSaveDto);
+    Provider providerPostDtoToProvider(ProviderPostDto providerPostDto);
 }
