@@ -1,7 +1,8 @@
 package com.databases.shop.repositories.queryinterfaces;
 
-public interface MaxAvgOrderCost {
+public interface MinMaxAvgOrderCost {
 
     double getMaxAvgOrderCost();
+    double getMinAvgOrderCost();
 
 }

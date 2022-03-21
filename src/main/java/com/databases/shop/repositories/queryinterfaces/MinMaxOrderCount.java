@@ -1,5 +1,6 @@
 package com.databases.shop.repositories.queryinterfaces;
 
-public interface MaxOrderCount {
+public interface MinMaxOrderCount {
     int getMaxCount();
+    int getMinCount();
 }

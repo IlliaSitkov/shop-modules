@@ -16,4 +16,12 @@ public class CustomerFilterBoundsDto {
     @Min(0)
     private double maxAvg;
 
+    @JsonProperty("min_overall")
+    @Min(0)
+    private int minOverall;
+
+    @JsonProperty("min_avg")
+    @Min(0)
+    private double minAvg;
+
 }

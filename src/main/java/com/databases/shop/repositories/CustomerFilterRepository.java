@@ -18,18 +18,16 @@ public class CustomerFilterRepository {
 
     public Iterable<Customer> filterCustomers(int overallProdQuant, int avgOrderCost, long customerId, long productId, int boughtTimes) {
 
-        boolean hasAllOnlyCategoriesFilterEnabled = customerId >= 0;
-
-        boolean productMoreThanKFilterEnabled = productId >= 0 && boughtTimes > 0;
-
-        String productMoreThanKFilter = productMoreThanKFilterEnabled ?
-                "id IN (\n" +
-                "        SELECT customer_id\n" +
-                        "        FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +
-                        "        WHERE order_t.status = 'DONE' AND product_articul = :prodId\n" +
-                        "        GROUP BY customer_id\n" +
-                        "        HAVING COUNT(*) >= :prodQuant\n" +
-                        "    )" : " TRUE ";
+        String productMoreThanKFilter =
+                "(:prodId < 0 OR id IN (\n" +
+                        "SELECT customer.id\n" +
+                        "FROM customer\n" +
+                        "WHERE :prodQuant <= (\n" +
+                        "    SELECT COUNT(*)\n" +
+                        "    FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +
+                        "    WHERE customer_id = customer.id AND order_t.status = 'DONE' AND product_articul = :prodId\n" +
+                        "    )" +
+                        "))";
 
         String avgOrderCostFilter =
                 "id IN (\n" +
@@ -49,7 +47,7 @@ public class CustomerFilterRepository {
 
         String overallProdQuantFilter =
                 "id IN (\n" +
-                "        SELECT id\n" +
+                        "SELECT id\n" +
                         "        FROM customer\n" +
                         "        WHERE :overallQuant <= (\n" +
                         "            SELECT COALESCE(SUM(prod_quantity),0)\n" +
@@ -58,9 +56,9 @@ public class CustomerFilterRepository {
                         "        )\n" +
                         "    )";
 
-        String hasAllOnlyCategoriesFilter = hasAllOnlyCategoriesFilterEnabled ?
-                "NOT EXISTS(\n" +
-                "        SELECT *\n" +
+        String hasAllOnlyCategoriesFilter =
+                "(:customerId < 0 OR NOT EXISTS(\n" +
+                        "SELECT *\n" +
                         "        FROM (((category INNER JOIN product p on category.id = p.category_fk)\n" +
                         "            INNER JOIN product_in_order ON p.articul = product_articul)\n" +
                         "            INNER JOIN order_t ON product_in_order.order_id = order_t.id) CPRO\n" +
@@ -85,7 +83,7 @@ public class CustomerFilterRepository {
                         "                INNER JOIN order_t ON product_in_order.order_id = order_t.id) CPRO2\n" +
                         "            WHERE CPRO2.status = 'DONE' AND CPRO2.customer_id = :customerId\n" +
                         "        )\n" +
-                        "    )": " TRUE ";
+                        "    ))";
 
         Query query = entityManager.createNativeQuery(
                 "SELECT *\n" +
@@ -97,15 +95,13 @@ public class CustomerFilterRepository {
                         + " AND " + productMoreThanKFilter
                         + " ORDER BY person_surname",Customer.class);
 
-        if (productMoreThanKFilterEnabled) {
-            query.setParameter("prodQuant",boughtTimes);
-            query.setParameter("prodId",productId);
-        }
+        query.setParameter("prodQuant",boughtTimes);
+        query.setParameter("prodId",productId);
+
         query.setParameter("avgCost",avgOrderCost);
         query.setParameter("overallQuant",overallProdQuant);
-        if (hasAllOnlyCategoriesFilterEnabled) {
-            query.setParameter("customerId",customerId);
-        }
+
+        query.setParameter("customerId",customerId);
 
         List<Customer> customers = new ArrayList<>();
         try {

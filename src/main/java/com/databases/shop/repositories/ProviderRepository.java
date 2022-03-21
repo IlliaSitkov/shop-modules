@@ -3,7 +3,6 @@ package com.databases.shop.repositories;
 import com.databases.shop.models.Category;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
-import com.databases.shop.repositories.queryinterfaces.MinMaxSalesmanIncome;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

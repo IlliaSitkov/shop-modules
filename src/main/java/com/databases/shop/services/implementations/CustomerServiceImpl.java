@@ -1,15 +1,12 @@
 package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.customer.NoCustomerWithSuchIdException;
-import com.databases.shop.exceptions.salesman.NoSalesmanWithSuchIdException;
-import com.databases.shop.exceptions.salesman.SalesmanRegistrationException;
 import com.databases.shop.mapstruct.dtos.dataDtos.CustomerFilterBoundsDto;
 import com.databases.shop.models.Customer;
-import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.CustomerFilterRepository;
 import com.databases.shop.repositories.CustomerRepository;
-import com.databases.shop.repositories.queryinterfaces.MaxAvgOrderCost;
-import com.databases.shop.repositories.queryinterfaces.MaxOverallQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxAvgOrderCost;
+import com.databases.shop.repositories.queryinterfaces.MinMaxOverallQuantity;
 import com.databases.shop.services.interfaces.AdminService;
 import com.databases.shop.services.interfaces.CustomerService;
 import com.databases.shop.utils.Utils;
@@ -79,12 +76,20 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerFilterBoundsDto getCustomerFilterBounds() {
 
-        MaxAvgOrderCost maxAvgOrderCost = customerRepository.getMaxAvgOrderCost();
-        MaxOverallQuantity maxOverallQuantity = customerRepository.getMaxOverallQuantity();
+        MinMaxAvgOrderCost minMaxAvgOrderCost = customerRepository.getMinMaxAvgOrderCost();
+        MinMaxOverallQuantity minMaxOverallQuantity = customerRepository.getMinMaxOverallQuantity();
+
+        System.out.println(minMaxAvgOrderCost.getMinAvgOrderCost());
+        System.out.println(minMaxAvgOrderCost.getMaxAvgOrderCost());
+
 
         CustomerFilterBoundsDto dto = new CustomerFilterBoundsDto();
-        dto.setMaxAvg(maxAvgOrderCost.getMaxAvgOrderCost());
-        dto.setMaxOverall(maxOverallQuantity.getMaxOverallQuantity());
+
+        dto.setMaxAvg(minMaxAvgOrderCost.getMaxAvgOrderCost());
+        dto.setMinAvg(minMaxAvgOrderCost.getMinAvgOrderCost());
+
+        dto.setMaxOverall(minMaxOverallQuantity.getMaxOverallQuantity());
+        dto.setMinOverall(minMaxOverallQuantity.getMinOverallQuantity());
 
         return dto;
     }
