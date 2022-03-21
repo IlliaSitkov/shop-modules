@@ -5,10 +5,7 @@ import com.databases.shop.exceptions.strings.InvalidAddressException;
 import com.databases.shop.exceptions.strings.InvalidContactsException;
 import com.databases.shop.exceptions.strings.InvalidNameException;
 import com.databases.shop.exceptions.product.ProductIllegalArgumentException;
-import com.databases.shop.models.Address;
-import com.databases.shop.models.Contacts;
-import com.databases.shop.models.PersonName;
-import com.databases.shop.models.Salesman;
+import com.databases.shop.models.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -107,4 +104,9 @@ public class Utils {
         salesman.setPersonName(processPersonName(salesman.getPersonName()));
     }
 
+    public void processCustomer(Customer customer) {
+        customer.setContacts(processContacts(customer.getContacts()));
+        customer.setPersonName(processPersonName(customer.getPersonName()));
+        customer.setAddress(processAddress(customer.getAddress()));
+    }
 }

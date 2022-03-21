@@ -35,10 +35,4 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Min(0)
-    @Column(name = "order_cost")
-    private double cost;
-
-    @OneToMany(mappedBy = "order")
-    private Set<ProductInOrder> productsInOrder = new HashSet<>();
 }

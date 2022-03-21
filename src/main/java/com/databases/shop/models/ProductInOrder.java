@@ -33,9 +33,5 @@ public class ProductInOrder {
     @Column(name = "prod_quantity")
     private double quantity;
 
-    @Min(0)
-    @Column(name = "row_cost")
-    private double rowCost;
-
 
 }

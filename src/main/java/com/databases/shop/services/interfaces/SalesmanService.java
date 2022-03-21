@@ -15,7 +15,7 @@ public interface SalesmanService {
 
     Salesman update(Long id, Salesman salesman);
 
-    boolean usersWithEmailExist(String email);
+//    boolean usersWithEmailExist(String email);
 
 //    Iterable<Salesman> haveGEDoneOrderQuantity(int quantity);
 
@@ -24,6 +24,8 @@ public interface SalesmanService {
     SalesmanGetDto saveSalesmanPostDto(SalesmanPostDto salesmanPostDto);
 
     SalesmanFilterBoundsDto getSalesmanFilterBounds();
+
+    Iterable<Salesman> getFilteredSalesmen(double income,int orders,boolean hasAllCategories);
 
 
 }
