@@ -39,5 +39,6 @@ public class Order {
     @Column(name = "order_cost")
     private double cost;
 
-
+    @OneToMany(mappedBy = "order")
+    private Set<ProductInOrder> productsInOrder = new HashSet<>();
 }

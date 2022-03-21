@@ -2,7 +2,9 @@ package com.databases.shop.controllers;
 
 import com.databases.shop.exceptions.provider.NoProviderWithSuchEdrpou;
 import com.databases.shop.exceptions.provider.ProviderIllegalArgumentException;
+import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.models.Provider;
+import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.services.implementations.ProviderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,6 +54,27 @@ public class ProviderController {
     public Provider updateProvider(@PathVariable("edrpou") Long edrpou, @Valid @RequestBody Provider provider) {
         provider.setEdrpou(edrpou);
         return providerService.updateProvider(provider);
+    }
+
+    @GetMapping("/filterProductsQuantity/{quantity}")
+    public Iterable<Provider> getProvidersFilteredByProductsQuantity(@PathVariable("quantity") int quantity){
+        System.out.println("getProvidersFilteredByProductsQuantity: " + quantity);
+        return providerService.getProvidersFilteredByProductsQuantity(quantity);
+    }
+
+    @GetMapping("/filterProductsQuantityAndAllSalesmen/{quantity}/{providerName}")
+    public Iterable<Provider> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(@PathVariable("quantity") Integer quantity, @PathVariable("providerName") String providerName){
+        return providerService.getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(quantity, providerName);
+    }
+
+    @GetMapping("/findName/{providerName}")
+    public Iterable<Provider> findName(@PathVariable("providerName") String providerName){
+        return providerService.findName(providerName);
+    }
+
+    @GetMapping("/filterBounds")
+    public MinMaxProductsQuantity getFilterBounds() {
+        return providerService.getMinMaxProductsQuantity();
     }
 
     @ExceptionHandler(NoProviderWithSuchEdrpou.class)

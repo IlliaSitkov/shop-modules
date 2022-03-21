@@ -2,10 +2,14 @@ package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.provider.NoProviderWithSuchEdrpou;
 import com.databases.shop.exceptions.provider.ProviderIllegalArgumentException;
+import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.models.Address;
 import com.databases.shop.models.Contacts;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.ProviderRepository;
+import com.databases.shop.repositories.queryinterfaces.MinMaxOrderCount;
+import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxSalesmanIncome;
 import com.databases.shop.services.interfaces.ProviderService;
 import com.databases.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,4 +112,25 @@ public class ProviderServiceImpl implements ProviderService {
         //Collections.sort(providers);
         return providers;
     }
+
+    @Override
+    public Iterable<Provider> getProvidersFilteredByProductsQuantity(int quantity) {
+        return providerRepository.findHavingQuantityOfProductsSoldBigger(quantity);
+    }
+
+    @Override
+    public Iterable<Provider> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(int quantity, String providerName) {
+        return providerRepository.findHavingAllSalesmenOfProviderAndQuantityOfProductsSoldBigger(quantity, providerName);
+    }
+
+    @Override
+    public MinMaxProductsQuantity getMinMaxProductsQuantity() {
+        return providerRepository.minMaxProductsQuantity();
+    }
+
+    @Override
+    public Iterable<Provider> findName(String name) {
+        return providerRepository.findName(name);
+    }
+
 }
