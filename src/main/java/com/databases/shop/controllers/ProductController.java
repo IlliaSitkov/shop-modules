@@ -2,6 +2,8 @@ package com.databases.shop.controllers;
 
 import com.databases.shop.exceptions.product.NoProductWithSuchArticul;
 import com.databases.shop.exceptions.product.ProductIllegalArgumentException;
+import com.databases.shop.mapstruct.dtos.product.ProductSlimGetDto;
+import com.databases.shop.mapstruct.mappers.ProductMapper;
 import com.databases.shop.models.Product;
 import com.databases.shop.services.implementations.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +25,19 @@ public class ProductController {
     @Autowired
     private ProductServiceImpl productService;
 
+    @Autowired
+    private ProductMapper productMapper;
+
     @GetMapping
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
     public Iterable<Product> getProducts(){
         return productService.getAll();
+    }
+
+    @GetMapping("/slim")
+    //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
+    public Iterable<ProductSlimGetDto> getSlimProducts(){
+        return productMapper.productsToProductsSlimGetDto(productService.getAll());
     }
 
     @GetMapping("/{articul}")

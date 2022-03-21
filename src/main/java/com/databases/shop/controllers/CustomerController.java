@@ -19,6 +19,7 @@ import javax.validation.Valid;
 
 @RestController
 @Validated
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RequestMapping("/customers")
 public class CustomerController {
 
@@ -30,18 +31,20 @@ public class CustomerController {
     private CustomerMapper customerMapper;
 
     @GetMapping
-    public Iterable<Customer> getAllCustomers() {
-        return customerService.findAll();
+    public Iterable<CustomerGetDto> getAllCustomers() {
+        return customerMapper.customersToCustomersGetDto(
+                customerService.findAll());
     }
 
     @GetMapping("/filter")
-    public Iterable<Customer> getFilteredCustomers(
+    public Iterable<CustomerGetDto> getFilteredCustomers(
             @RequestParam("overallQuant") int overallQuant,
             @RequestParam("avgCost") int avgCost,
-            @RequestParam("customerId") long customerId,
             @RequestParam("productId") long productId,
-            @RequestParam("boughtTimes") int boughtTimes) {
-        return customerService.getFilteredCustomers(overallQuant,avgCost,customerId,productId,boughtTimes);
+            @RequestParam("boughtTimes") int boughtTimes,
+            @RequestParam("customerId") long customerId) {
+        return customerMapper.customersToCustomersGetDto(
+                customerService.getFilteredCustomers(overallQuant,avgCost,customerId,productId,boughtTimes));
     }
 
     @DeleteMapping("/{id}")

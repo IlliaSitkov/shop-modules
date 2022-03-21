@@ -94,10 +94,11 @@ public class CustomerFilterRepository {
                         + hasAllOnlyCategoriesFilter
                         + " AND " + avgOrderCostFilter
                         + " AND " + overallProdQuantFilter
-                        + " AND " + productMoreThanKFilter,Customer.class);
+                        + " AND " + productMoreThanKFilter
+                        + " ORDER BY person_surname",Customer.class);
 
         if (productMoreThanKFilterEnabled) {
-            query.setParameter("prodQuant",boughtTimes);// p
+            query.setParameter("prodQuant",boughtTimes);
             query.setParameter("prodId",productId);
         }
         query.setParameter("avgCost",avgOrderCost);
