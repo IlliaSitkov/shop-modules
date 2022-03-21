@@ -60,11 +60,11 @@ public class SalesmanController {
         return salesmanService.delete(id);
     }
 
-    @GetMapping("/email")
-    public boolean usersWithEmailExist(@RequestParam(name = "email") String email) {
-        System.out.println(email);
-        return salesmanService.usersWithEmailExist(email);
-    }
+//    @GetMapping("/email")
+//    public boolean usersWithEmailExist(@RequestParam(name = "email") String email) {
+//        System.out.println(email);
+//        return salesmanService.usersWithEmailExist(email);
+//    }
 
     @GetMapping("/filterBounds")
     public SalesmanFilterBoundsDto getFilterBounds() {

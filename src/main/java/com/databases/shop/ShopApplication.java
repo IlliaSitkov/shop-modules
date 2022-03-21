@@ -1,6 +1,7 @@
 package com.databases.shop;
 
 import com.databases.shop.models.Salesman;
+import com.databases.shop.repositories.CustomerFilterRepository;
 import com.databases.shop.repositories.SalesmanFilterRepository;
 import com.databases.shop.repositories.SalesmanRepository;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -23,6 +24,9 @@ public class ShopApplication implements CommandLineRunner {
 
 	@Autowired
 	private SalesmanFilterRepository salesmanFilterRepository;
+
+	@Autowired
+	private CustomerFilterRepository customerFilterRepository;
 
 
 	public static void main(String[] args) {
@@ -50,7 +54,8 @@ public class ShopApplication implements CommandLineRunner {
 
 //		salesmanRepository.salesmanFilter(150,2).forEach(System.out::println);
 
-		salesmanFilterRepository.filterSalesmen(0,0,false).forEach(s -> System.out.println(s.getId()));
+//		salesmanFilterRepository.filterSalesmen(0,0,false).forEach(s -> System.out.println(s.getId()));
 
+		customerFilterRepository.filterCustomers(0,0,-1,-1,0).forEach(s -> System.out.println(s.getId()));
 	}
 }

@@ -11,8 +11,8 @@ import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.CustomerRepository;
 import com.databases.shop.repositories.SalesmanFilterRepository;
 import com.databases.shop.repositories.SalesmanRepository;
-import com.databases.shop.repositories.queryinterfaces.MinMaxOrderCount;
-import com.databases.shop.repositories.queryinterfaces.MinMaxSalesmanIncome;
+import com.databases.shop.repositories.queryinterfaces.MaxOrderCount;
+import com.databases.shop.repositories.queryinterfaces.MaxSalesmanIncome;
 import com.databases.shop.services.interfaces.AdminService;
 import com.databases.shop.services.interfaces.SalesmanService;
 import com.databases.shop.utils.Utils;
@@ -56,11 +56,20 @@ public class SalesmanServiceImpl implements SalesmanService {
         utils.processSalesman(salesman);
         utils.checkPersonName(salesman.getPersonName());
         utils.checkContacts(salesman.getContacts());
-        if (usersWithEmailExist(salesman.getContacts().getEmail())) {
-            throw new SalesmanWithEmailAlreadyExistsException(salesman.getContacts().getEmail());
-        }
+
         return salesmanRepository.save(salesman);
     }
+
+//    @Override
+//    public Salesman save(Salesman salesman) {
+//        utils.processSalesman(salesman);
+//        utils.checkPersonName(salesman.getPersonName());
+//        utils.checkContacts(salesman.getContacts());
+//        if (usersWithEmailExist(salesman.getContacts().getEmail())) {
+//            throw new SalesmanWithEmailAlreadyExistsException(salesman.getContacts().getEmail());
+//        }
+//        return salesmanRepository.save(salesman);
+//    }
 
     public SalesmanGetDto saveSalesmanPostDto(SalesmanPostDto salesmanPostDto) {
         try {
@@ -77,16 +86,14 @@ public class SalesmanServiceImpl implements SalesmanService {
 
     @Override
     public SalesmanFilterBoundsDto getSalesmanFilterBounds() {
-        MinMaxOrderCount minMaxOrderCount = salesmanRepository.minMaxOrderCount();
-        MinMaxSalesmanIncome minMaxSalesmanIncome = salesmanRepository.minMaxSalesmanIncome();
+        MaxOrderCount maxOrderCount = salesmanRepository.maxOrderCount();
+        MaxSalesmanIncome maxSalesmanIncome = salesmanRepository.maxSalesmanIncome();
 
         SalesmanFilterBoundsDto salesmanFilterBoundsDto = new SalesmanFilterBoundsDto();
 
-        salesmanFilterBoundsDto.setMinOrderCount(minMaxOrderCount.getMinCount());
-        salesmanFilterBoundsDto.setMaxOrderCount(minMaxOrderCount.getMaxCount());
+        salesmanFilterBoundsDto.setMaxOrderCount(maxOrderCount.getMaxCount());
 
-        salesmanFilterBoundsDto.setMinIncome(minMaxSalesmanIncome.getMinIncome());
-        salesmanFilterBoundsDto.setMaxIncome(minMaxSalesmanIncome.getMaxIncome());
+        salesmanFilterBoundsDto.setMaxIncome(maxSalesmanIncome.getMaxIncome());
 
         return salesmanFilterBoundsDto;
     }
@@ -108,11 +115,11 @@ public class SalesmanServiceImpl implements SalesmanService {
         return salesmanRepository.save(s);
     }
 
-    @Override
-    public boolean usersWithEmailExist(String email) {
-        return salesmanRepository.existsByEmail(email) ||
-                customerRepository.existsByEmail(email);
-    }
+//    @Override
+//    public boolean usersWithEmailExist(String email) {
+//        return salesmanRepository.existsByEmail(email) ||
+//                customerRepository.existsByEmail(email);
+//    }
 
     @Override
     public boolean delete(Long id) {

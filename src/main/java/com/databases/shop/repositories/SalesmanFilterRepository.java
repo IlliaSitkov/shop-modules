@@ -61,7 +61,8 @@ public class SalesmanFilterRepository {
                         + " AND "
                         + incomeFilter
                         + " AND "
-                        + hasAllCategoriesFilter,
+                        + hasAllCategoriesFilter
+                        +" ORDER BY person_surname",
                 Salesman.class);
         if (incomeFilterEnabled) query.setParameter("income", income);
         if (ordersFilterEnabled) query.setParameter("orders", orders);

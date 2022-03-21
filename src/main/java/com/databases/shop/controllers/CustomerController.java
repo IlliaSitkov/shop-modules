@@ -1,12 +1,21 @@
 package com.databases.shop.controllers;
 
+import com.databases.shop.mapstruct.dtos.customer.CustomerGetDto;
+import com.databases.shop.mapstruct.dtos.customer.CustomerPostDto;
+import com.databases.shop.mapstruct.dtos.customer.CustomerPutDto;
+import com.databases.shop.mapstruct.dtos.dataDtos.CustomerFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
+import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
+import com.databases.shop.mapstruct.dtos.salesman.SalesmanPutDto;
+import com.databases.shop.mapstruct.mappers.CustomerMapper;
 import com.databases.shop.models.Customer;
 import com.databases.shop.services.interfaces.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @Validated
@@ -17,11 +26,46 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private CustomerMapper customerMapper;
 
     @GetMapping
     public Iterable<Customer> getAllCustomers() {
         return customerService.findAll();
     }
+
+    @GetMapping("/filter")
+    public Iterable<Customer> getFilteredCustomers(
+            @RequestParam("overallQuant") int overallQuant,
+            @RequestParam("avgCost") int avgCost,
+            @RequestParam("customerId") long customerId,
+            @RequestParam("productId") long productId,
+            @RequestParam("boughtTimes") int boughtTimes) {
+        return customerService.getFilteredCustomers(overallQuant,avgCost,customerId,productId,boughtTimes);
+    }
+
+    @DeleteMapping("/{id}")
+    public boolean deleteCustomer(@PathVariable("id") Long id) {
+        return customerService.delete(id);
+    }
+
+    @PutMapping("/{id}")
+    public CustomerGetDto updateCustomer(@PathVariable("id") Long id, @Valid @RequestBody CustomerPutDto customerPutDto) {
+        return customerMapper.customerToCustomerGetDto(
+                customerService.update(id,customerMapper.customerPutDtoToCustomer(customerPutDto)));
+    }
+
+    @PostMapping
+    public CustomerGetDto saveCustomer(@Valid @RequestBody CustomerPostDto customerPostDto) {
+        return customerMapper.customerToCustomerGetDto(
+                customerService.save(customerMapper.customerPostDtoToCustomer(customerPostDto)));
+    }
+
+    @GetMapping("/filterBounds")
+    public CustomerFilterBoundsDto getFilterBounds() {
+        return customerService.getCustomerFilterBounds();
+    }
+
 
 
 }

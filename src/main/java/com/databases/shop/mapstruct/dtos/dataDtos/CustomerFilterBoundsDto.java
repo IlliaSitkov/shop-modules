@@ -6,14 +6,14 @@ import lombok.Setter;
 import javax.validation.constraints.Min;
 
 @Setter
-public class SalesmanFilterBoundsDto {
+public class CustomerFilterBoundsDto {
 
-    @JsonProperty("max_order")
+    @JsonProperty("max_overall")
     @Min(0)
-    private int maxOrderCount;
+    private int maxOverall;
 
-    @JsonProperty("max_income")
+    @JsonProperty("max_avg")
     @Min(0)
-    private double maxIncome;
+    private double maxAvg;
 
 }

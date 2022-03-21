@@ -1,8 +1,7 @@
 package com.databases.shop.repositories.queryinterfaces;
 
-public interface MinMaxSalesmanIncome {
+public interface MaxSalesmanIncome {
 
-    int getMinIncome();
     int getMaxIncome();
 
 }
