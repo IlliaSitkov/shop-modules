@@ -4,6 +4,10 @@ import com.databases.shop.exceptions.product.NoProductWithSuchArticul;
 import com.databases.shop.exceptions.product.ProductIllegalArgumentException;
 import com.databases.shop.mapstruct.dtos.product.ProductSlimGetDto;
 import com.databases.shop.mapstruct.mappers.ProductMapper;
+import com.databases.shop.mapstruct.dtos.product.ProductGetDto;
+import com.databases.shop.mapstruct.dtos.product.ProductPostDto;
+import com.databases.shop.mapstruct.dtos.product.ProductPutDto;
+import com.databases.shop.mapstruct.mappers.ProductMapper;
 import com.databases.shop.models.Product;
 import com.databases.shop.services.implementations.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +34,8 @@ public class ProductController {
 
     @GetMapping
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
-    public Iterable<Product> getProducts(){
-        return productService.getAll();
+    public Iterable<ProductGetDto> getProducts(){
+        return productMapper.productsToProductsGetDto(productService.getAll());
     }
 
     @GetMapping("/slim")
@@ -42,8 +46,8 @@ public class ProductController {
 
     @GetMapping("/{articul}")
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
-    public Product getProduct(@PathVariable("articul") Long articul) {
-        return productService.getProductByArticul(articul);
+    public ProductGetDto getProduct(@PathVariable("articul") Long articul) {
+        return productMapper.productToProductGetDto(productService.getProductByArticul(articul));
     }
 
     @DeleteMapping("/{articul}")
@@ -54,15 +58,16 @@ public class ProductController {
 
     @PostMapping
     //@PreAuthorize("hasRole('ADMIN')")
-    public Product addProduct(@Valid @RequestBody Product product){
-        return productService.addProduct(product);
+    public ProductGetDto addProduct(@Valid @RequestBody ProductPostDto productPostDto){
+        return productMapper.productToProductGetDto(productService.addProduct(productMapper.productPostDtoToProduct(productPostDto)));
     }
 
     @PutMapping("/{articul}")
     //@PreAuthorize("hasRole('ADMIN')")
-    public Product updateProduct(@PathVariable("articul") Long articul, @Valid @RequestBody Product product) {
+    public ProductGetDto updateProduct(@PathVariable("articul") Long articul, @Valid @RequestBody ProductPutDto productPutDto) {
+        Product product = productMapper.productPutDtoToProduct(productPutDto);
         product.setArticul(articul);
-        return productService.updateProduct(product);
+        return productMapper.productToProductGetDto(productService.updateProduct(product));
     }
 
     @ExceptionHandler(NoProductWithSuchArticul.class)

@@ -2,8 +2,13 @@ package com.databases.shop.controllers;
 
 import com.databases.shop.exceptions.provider.NoProviderWithSuchEdrpou;
 import com.databases.shop.exceptions.provider.ProviderIllegalArgumentException;
+import com.databases.shop.mapstruct.dtos.provider.ProviderGetDto;
+import com.databases.shop.mapstruct.dtos.provider.ProviderPostDto;
+import com.databases.shop.mapstruct.dtos.provider.ProviderPutDto;
+import com.databases.shop.mapstruct.mappers.ProviderMapper;
 import com.databases.shop.models.Provider;
-import com.databases.shop.services.implementations.ProviderServiceImpl;
+import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
+import com.databases.shop.services.interfaces.ProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,18 +26,21 @@ import java.util.Map;
 public class ProviderController {
 
     @Autowired
-    private ProviderServiceImpl providerService;
+    private ProviderService providerService;
+
+    @Autowired
+    private ProviderMapper providerMapper;
 
     @GetMapping
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
-    public Iterable<Provider> getProviders(){
-        return providerService.getAll();
+    public Iterable<ProviderGetDto> getProviders(){
+        return providerMapper.providersToProvidersGetDto(providerService.getAll());
     }
 
     @GetMapping("/{edrpou}")
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
-    public Provider getProvider(@PathVariable("edrpou") Long edrpou) {
-        return providerService.getProviderByEdrpou(edrpou);
+    public ProviderGetDto getProvider(@PathVariable("edrpou") Long edrpou) {
+        return providerMapper.providerToProviderGetDto(providerService.getProviderByEdrpou(edrpou));
     }
 
     @DeleteMapping("/{edrpou}")
@@ -43,15 +51,37 @@ public class ProviderController {
 
     @PostMapping
     //@PreAuthorize("hasRole('ADMIN')")
-    public Provider addProvider(@Valid @RequestBody Provider provider){
-        return providerService.addProvider(provider);
+    public ProviderGetDto addProvider(@Valid @RequestBody ProviderPostDto providerPostDto){
+        return providerMapper.providerToProviderGetDto(providerService.addProvider(providerMapper.providerPostDtoToProvider(providerPostDto)));
     }
 
     @PutMapping("/{edrpou}")
     //@PreAuthorize("hasRole('ADMIN')")
-    public Provider updateProvider(@PathVariable("edrpou") Long edrpou, @Valid @RequestBody Provider provider) {
+    public ProviderGetDto updateProvider(@PathVariable("edrpou") Long edrpou, @Valid @RequestBody ProviderPutDto providerPutDto) {
+        Provider provider = providerMapper.providerPutDtoToProvider(providerPutDto);
         provider.setEdrpou(edrpou);
-        return providerService.updateProvider(provider);
+        return providerMapper.providerToProviderGetDto(providerService.updateProvider(provider));
+    }
+
+    @GetMapping("/filterProductsQuantity/{quantity}")
+    public Iterable<ProviderGetDto> getProvidersFilteredByProductsQuantity(@PathVariable("quantity") int quantity){
+        System.out.println("getProvidersFilteredByProductsQuantity: " + quantity);
+        return providerMapper.providersToProvidersGetDto(providerService.getProvidersFilteredByProductsQuantity(quantity));
+    }
+
+    @GetMapping("/filterProductsQuantityAndAllSalesmen/{quantity}/{providerName}")
+    public Iterable<ProviderGetDto> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(@PathVariable("quantity") Integer quantity, @PathVariable("providerName") String providerName){
+        return providerMapper.providersToProvidersGetDto(providerService.getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(quantity, providerName));
+    }
+
+    @GetMapping("/findName/{providerName}")
+    public Iterable<ProviderGetDto> findName(@PathVariable("providerName") String providerName){
+        return providerMapper.providersToProvidersGetDto(providerService.findName(providerName));
+    }
+
+    @GetMapping("/filterBounds")
+    public MinMaxProductsQuantity getFilterBounds() {
+        return providerService.getMinMaxProductsQuantity();
     }
 
     @ExceptionHandler(NoProviderWithSuchEdrpou.class)

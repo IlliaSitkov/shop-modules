@@ -3,9 +3,13 @@ package com.databases.shop.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 // product(articul, name, description, quantity, price, edrpou, cat_number).
 @Entity
@@ -43,6 +47,10 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_fk", nullable = false)
     private Category category;
+
+    @OneToMany(mappedBy = "product")//, cascade = CascadeType.ALL)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<ProductInOrder> productsInOrder = new HashSet<>();
 
     public Product(String name, String description, int quantity, double price, Provider provider, Category category) {
         this.name = name;

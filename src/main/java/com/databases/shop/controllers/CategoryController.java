@@ -2,6 +2,10 @@ package com.databases.shop.controllers;
 
 import com.databases.shop.exceptions.category.CategoryIllegalArgumentException;
 import com.databases.shop.exceptions.category.NoCategoryWithSuchId;
+import com.databases.shop.mapstruct.dtos.category.CategoryGetDto;
+import com.databases.shop.mapstruct.dtos.category.CategoryPostDto;
+import com.databases.shop.mapstruct.dtos.category.CategoryPutDto;
+import com.databases.shop.mapstruct.mappers.CategoryMapper;
 import com.databases.shop.models.Category;
 import com.databases.shop.services.implementations.CategoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +27,19 @@ public class CategoryController {
     @Autowired
     private CategoryServiceImpl categoryService;
 
+    @Autowired
+    private CategoryMapper categoryMapper;
+
     @GetMapping
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
-    public Iterable<Category> getCategories(){
-        return categoryService.getAll();
+    public Iterable<CategoryGetDto> getCategories(){
+        return categoryMapper.categoriesToCategoriesGetDto(categoryService.getAll());
     }
 
     @GetMapping("/{id}")
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
-    public Category getCategory(@PathVariable("id") Long id) {
-        return categoryService.getCategoryById(id);
+    public CategoryGetDto getCategory(@PathVariable("id") Long id) {
+        return categoryMapper.categoryToCategoryGetDto(categoryService.getCategoryById(id));
     }
 
     @DeleteMapping("/{id}")
@@ -43,15 +50,16 @@ public class CategoryController {
 
     @PostMapping
     //@PreAuthorize("hasRole('ADMIN')")
-    public Category addCategory(@Valid @RequestBody Category category){
-        return categoryService.addCategory(category);
+    public CategoryGetDto addCategory(@Valid @RequestBody CategoryPostDto categoryPostDto){
+        return categoryMapper.categoryToCategoryGetDto(categoryService.addCategory(categoryMapper.categoryPostDtoToCategory(categoryPostDto)));
     }
 
     @PutMapping("/{id}")
     //@PreAuthorize("hasRole('ADMIN')")
-    public Category updateCategory(@PathVariable("id") Long id, @Valid @RequestBody Category category) {
+    public CategoryGetDto updateCategory(@PathVariable("id") Long id, @Valid @RequestBody CategoryPutDto categoryPutDto) {
+        Category category = categoryMapper.categoryPutDtoToCategory(categoryPutDto);
         category.setId(id);
-        return categoryService.updateCategory(category);
+        return categoryMapper.categoryToCategoryGetDto(categoryService.updateCategory(category));
     }
 
     @ExceptionHandler(NoCategoryWithSuchId.class)
