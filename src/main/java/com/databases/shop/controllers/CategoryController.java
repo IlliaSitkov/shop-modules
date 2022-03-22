@@ -5,8 +5,11 @@ import com.databases.shop.exceptions.category.NoCategoryWithSuchId;
 import com.databases.shop.mapstruct.dtos.category.CategoryGetDto;
 import com.databases.shop.mapstruct.dtos.category.CategoryPostDto;
 import com.databases.shop.mapstruct.dtos.category.CategoryPutDto;
+import com.databases.shop.mapstruct.dtos.dataDtos.CategoryFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.provider.ProviderGetDto;
 import com.databases.shop.mapstruct.mappers.CategoryMapper;
 import com.databases.shop.models.Category;
+import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.services.implementations.CategoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,6 +63,21 @@ public class CategoryController {
         Category category = categoryMapper.categoryPutDtoToCategory(categoryPutDto);
         category.setId(id);
         return categoryMapper.categoryToCategoryGetDto(categoryService.updateCategory(category));
+    }
+
+    @GetMapping("/filterCustomersAndProductsQuantity/{customersQuant}/{productsQuant}")
+    public Iterable<CategoryGetDto> getCategoriesFilteredByCustomersAndProductsQuantity(@PathVariable("customersQuant") int customersQuant, @PathVariable("productsQuant") int productsQuant){
+        return categoryMapper.categoriesToCategoriesGetDto(categoryService.getCategoriesFilteredByCustomersAndProductsQuantity(customersQuant, productsQuant));
+    }
+
+    @GetMapping("/filterCustomersAndProductsQuantityWithMaxProductsQuantity/{customersQuant}/{productsQuant}")
+    public Iterable<CategoryGetDto> getCategoriesFilteredByCustomersAndProductsQuantityWithMaxProductsQuantity(@PathVariable("customersQuant") int customersQuant, @PathVariable("productsQuant") int productsQuant){
+        return categoryMapper.categoriesToCategoriesGetDto(categoryService.getCategoriesFilteredByCustomersAndProductsQuantityWithMaxProductsQuantity(customersQuant, productsQuant));
+    }
+
+    @GetMapping("/filterBounds")
+    public CategoryFilterBoundsDto getFilterBounds() {
+        return categoryService.getCategoryFilterBounds();
     }
 
     @ExceptionHandler(NoCategoryWithSuchId.class)

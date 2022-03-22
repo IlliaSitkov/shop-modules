@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
 @Validated
 @RequestMapping("/customers")

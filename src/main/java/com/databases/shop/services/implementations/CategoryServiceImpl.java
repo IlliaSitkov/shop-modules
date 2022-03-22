@@ -2,8 +2,14 @@ package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.category.CategoryIllegalArgumentException;
 import com.databases.shop.exceptions.category.NoCategoryWithSuchId;
+import com.databases.shop.mapstruct.dtos.dataDtos.CategoryFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.models.Category;
 import com.databases.shop.repositories.CategoryRepository;
+import com.databases.shop.repositories.queryinterfaces.MaxOrderCount;
+import com.databases.shop.repositories.queryinterfaces.MaxSalesmanIncome;
+import com.databases.shop.repositories.queryinterfaces.MinMaxCustomersQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.services.interfaces.CategoryService;
 import com.databases.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,5 +99,31 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = categoryRepository.findAll();
         //Collections.sort(categories);
         return categories;
+    }
+
+    @Override
+    public Iterable<Category> getCategoriesFilteredByCustomersAndProductsQuantity(int customersQuant, int productsQuant) {
+        return categoryRepository.findHavingQuantityOfCustomersBiggerAndQuantityOfProductsSoldBigger(customersQuant, productsQuant);
+    }
+
+    @Override
+    public Iterable<Category> getCategoriesFilteredByCustomersAndProductsQuantityWithMaxProductsQuantity(int customersQuant, int productsQuant) {
+        return categoryRepository.findHavingQuantityOfCustomersBiggerAndQuantityOfProductsSoldBiggerWithMaxProductsQuantity(customersQuant, productsQuant);
+    }
+
+    @Override
+    public CategoryFilterBoundsDto getCategoryFilterBounds() {
+
+        MinMaxCustomersQuantity minMaxCustomersQuantity = categoryRepository.minMaxCustomersQuantity();
+        MinMaxProductsQuantity minMaxProductsQuantity = categoryRepository.minMaxProductsQuantity();
+
+        CategoryFilterBoundsDto categoryFilterBoundsDto = new CategoryFilterBoundsDto();
+
+        categoryFilterBoundsDto.setMinCustomersQuant(minMaxCustomersQuantity.getMinQuantity());
+        categoryFilterBoundsDto.setMaxCustomersQuant(minMaxCustomersQuantity.getMaxQuantity());
+        categoryFilterBoundsDto.setMinProductsQuant(minMaxProductsQuantity.getMinQuantity());
+        categoryFilterBoundsDto.setMaxProductsQuant(minMaxProductsQuantity.getMaxQuantity());
+
+        return categoryFilterBoundsDto;
     }
 }

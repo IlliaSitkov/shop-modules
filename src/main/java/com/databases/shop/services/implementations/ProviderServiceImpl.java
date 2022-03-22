@@ -2,14 +2,11 @@ package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.provider.NoProviderWithSuchEdrpou;
 import com.databases.shop.exceptions.provider.ProviderIllegalArgumentException;
-import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.models.Address;
 import com.databases.shop.models.Contacts;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.ProviderRepository;
-import com.databases.shop.repositories.queryinterfaces.MinMaxOrderCount;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
-import com.databases.shop.repositories.queryinterfaces.MinMaxSalesmanIncome;
 import com.databases.shop.services.interfaces.ProviderService;
 import com.databases.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
