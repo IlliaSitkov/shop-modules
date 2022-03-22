@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,28 +17,25 @@ public class SalesmanFilterRepository {
 
     public Iterable<Salesman> filterSalesmen(double income, double orders, boolean hasAllCategories) {
 
-        boolean ordersFilterEnabled = orders > 0;
-        boolean incomeFilterEnabled = income > 0;
+        String ordersFilter =
+                "id IN (SELECT salesman.id\n" +
+                        "FROM salesman\n" +
+                        "WHERE :orders <= (\n" +
+                        "    SELECT COUNT(*)\n" +
+                        "    FROM order_t\n" +
+                        "    WHERE status = 'DONE' AND salesman_id = salesman.id\n" +
+                        "    ))";
 
-        String ordersFilter = ordersFilterEnabled ?
-                "id IN (" +
-                        "SELECT salesman_id\n" +
-                        "FROM order_t\n" +
-                        "    WHERE status = 'DONE'\n" +
-                        "    GROUP BY salesman_id\n" +
-                        "    HAVING COUNT(id) >= :orders)" : " TRUE ";
+        String incomeFilter =
+                "id IN (SELECT salesman.id\n" +
+                        "FROM salesman LEFT OUTER JOIN (SELECT salesman_id, prod_price*prod_quantity AS row_cost\n" +
+                        "     FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +
+                        "     WHERE status = 'DONE') RowCosts ON salesman.id = RowCosts.salesman_id\n" +
+                        "GROUP BY salesman.id\n" +
+                        "HAVING SUM(COALESCE(row_cost,0)) >= :income)";
 
-        String incomeFilter = incomeFilterEnabled ?
-                "id IN (SELECT salesman_id\n" +
-                        "    FROM\n" +
-                        "        (SELECT salesman_id, prod_price*prod_quantity AS row_cost\n" +
-                        "         FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +
-                        "         WHERE status = 'DONE') AS RowCosts\n" +
-                        "    GROUP BY salesman_id\n" +
-                        "    HAVING SUM(row_cost) >= :income)" : " TRUE ";
-
-        String hasAllCategoriesFilter = hasAllCategories ?
-                "NOT EXISTS (\n" +
+        String hasAllCategoriesFilter =
+                "(:hasAllCategories = FALSE OR NOT EXISTS (\n" +
                         "        SELECT category.id\n" +
                         "        FROM category\n" +
                         "        WHERE NOT EXISTS(\n" +
@@ -51,7 +47,7 @@ public class SalesmanFilterRepository {
                         "                        WHERE status = 'DONE' AND product_articul = articul AND salesman_id = salesman.id\n" +
                         "                    )\n" +
                         "            )\n" +
-                        "    )" : " TRUE ";
+                        "    ))";
 
         Query query = entityManager.createNativeQuery(
                 "SELECT * \n" +
@@ -64,8 +60,9 @@ public class SalesmanFilterRepository {
                         + hasAllCategoriesFilter
                         +" ORDER BY person_surname",
                 Salesman.class);
-        if (incomeFilterEnabled) query.setParameter("income", income);
-        if (ordersFilterEnabled) query.setParameter("orders", orders);
+        query.setParameter("income", income);
+        query.setParameter("orders", orders);
+        query.setParameter("hasAllCategories", hasAllCategories);
         List<Salesman> salesmen = new ArrayList<>();
         try {
             salesmen = query.getResultList();

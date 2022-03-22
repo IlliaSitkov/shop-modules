@@ -1,11 +1,10 @@
 package com.databases.shop.repositories;
 
 import com.databases.shop.models.Salesman;
-import com.databases.shop.repositories.queryinterfaces.MaxOrderCount;
-import com.databases.shop.repositories.queryinterfaces.MaxSalesmanIncome;
+import com.databases.shop.repositories.queryinterfaces.MinMaxOrderCount;
+import com.databases.shop.repositories.queryinterfaces.MinMaxSalesmanIncome;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -28,25 +27,24 @@ public interface SalesmanRepository extends JpaRepository<Salesman,Long> {
 
 
     @Query(value =
-            "SELECT COALESCE(MAX(num_ord),0) AS maxCount\n" +
-            "FROM (\n" +
-            "    SELECT COUNT(*) AS num_ord\n" +
+            "SELECT MIN(COALESCE(num_ord,0)) AS minCount,MAX(COALESCE(num_ord,0)) AS maxCount\n" +
+            "FROM salesman LEFT OUTER JOIN (\n" +
+            "    SELECT salesman_id,COUNT(*) AS num_ord\n" +
             "    FROM order_t\n" +
             "    WHERE status = 'DONE'\n" +
-            "    GROUP BY salesman_id) AS T", nativeQuery = true)
-    MaxOrderCount maxOrderCount();
+            "    GROUP BY salesman_id) T ON salesman.id = salesman_id", nativeQuery = true)
+    MinMaxOrderCount minMaxOrderCount();
 
 
     @Query(value =
-            "SELECT COALESCE (MAX(sum_per_salesman),0) AS maxIncome\n" +
-            "FROM\n" +
-            "    (SELECT SUM(row_cost) AS sum_per_salesman\n" +
-            "    FROM\n" +
-            "        (SELECT salesman_id, prod_price*prod_quantity AS row_cost\n" +
-            "        FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +
-            "        WHERE status = 'DONE') AS RowCosts\n" +
-            "    GROUP BY salesman_id) AS SalesmenIncome", nativeQuery = true)
-    MaxSalesmanIncome maxSalesmanIncome();
+            "SELECT MIN(COALESCE(sum_per_salesman,0)) AS minIncome, MAX(COALESCE(sum_per_salesman,0)) AS maxIncome\n" +
+            "FROM salesman LEFT OUTER JOIN (SELECT salesman_id, SUM(row_cost) AS sum_per_salesman\n" +
+            "                               FROM\n" +
+            "                                   (SELECT salesman_id, prod_price*prod_quantity AS row_cost\n" +
+            "                                    FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +
+            "                                    WHERE status = 'DONE') AS RowCosts\n" +
+            "                               GROUP BY salesman_id) SalesmanCost ON salesman.id = salesman_id", nativeQuery = true)
+    MinMaxSalesmanIncome minMaxSalesmanIncome();
 
 
 

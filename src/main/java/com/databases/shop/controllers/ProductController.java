@@ -2,6 +2,8 @@ package com.databases.shop.controllers;
 
 import com.databases.shop.exceptions.product.NoProductWithSuchArticul;
 import com.databases.shop.exceptions.product.ProductIllegalArgumentException;
+import com.databases.shop.mapstruct.dtos.product.ProductSlimGetDto;
+import com.databases.shop.mapstruct.mappers.ProductMapper;
 import com.databases.shop.mapstruct.dtos.product.ProductGetDto;
 import com.databases.shop.mapstruct.dtos.product.ProductPostDto;
 import com.databases.shop.mapstruct.dtos.product.ProductPutDto;
@@ -34,6 +36,12 @@ public class ProductController {
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
     public Iterable<ProductGetDto> getProducts(){
         return productMapper.productsToProductsGetDto(productService.getAll());
+    }
+
+    @GetMapping("/slim")
+    //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
+    public Iterable<ProductSlimGetDto> getSlimProducts(){
+        return productMapper.productsToProductsSlimGetDto(productService.getAll());
     }
 
     @GetMapping("/{articul}")
