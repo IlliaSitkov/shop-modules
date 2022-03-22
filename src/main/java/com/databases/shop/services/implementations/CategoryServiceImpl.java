@@ -6,8 +6,6 @@ import com.databases.shop.mapstruct.dtos.dataDtos.CategoryFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.models.Category;
 import com.databases.shop.repositories.CategoryRepository;
-import com.databases.shop.repositories.queryinterfaces.MaxOrderCount;
-import com.databases.shop.repositories.queryinterfaces.MaxSalesmanIncome;
 import com.databases.shop.repositories.queryinterfaces.MinMaxCustomersQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.services.interfaces.CategoryService;
