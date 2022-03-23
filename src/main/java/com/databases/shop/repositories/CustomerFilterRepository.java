@@ -1,7 +1,6 @@
 package com.databases.shop.repositories;
 
 import com.databases.shop.models.Customer;
-import com.databases.shop.models.Salesman;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,18 +30,16 @@ public class CustomerFilterRepository {
 
         String avgOrderCostFilter =
                 "id IN (\n" +
-                "        SELECT id\n" +
-                "        FROM customer\n" +
-                "        WHERE :avgCost <= (\n" +
-                "            SELECT COALESCE(AVG(orderCost),0)\n" +
-                "            FROM (\n" +
-                "                     SELECT Rows.order_id, SUM(Rows.row_cost) AS orderCost\n" +
-                "                     FROM (SELECT order_id, prod_quantity*prod_price AS row_cost\n" +
-                "                           FROM product_in_order) Rows\n" +
-                "                     GROUP BY Rows.order_id\n" +
-                "                 ) OrderCost INNER JOIN order_t ON OrderCost.order_id = order_t.id\n" +
-                "            WHERE order_t.status = 'DONE' AND order_t.customer_id = customer.id\n" +
-                "        )\n" +
+                        "SELECT id\n" +
+                        "FROM customer\n" +
+                        "WHERE :avgCost <= (\n" +
+                        "    SELECT COALESCE(AVG(orderCost),0)\n" +
+                        "    FROM (\n" +
+                        "             SELECT order_id, SUM(prod_quantity*prod_price) AS orderCost\n" +
+                        "             FROM product_in_order\n" +
+                        "             GROUP BY order_id\n" +
+                        "         ) OrderCost INNER JOIN order_t ON OrderCost.order_id = order_t.id\n" +
+                        "    WHERE order_t.status = 'DONE' AND order_t.customer_id = customer.id)\n" +
                 "    )";
 
         String overallProdQuantFilter =

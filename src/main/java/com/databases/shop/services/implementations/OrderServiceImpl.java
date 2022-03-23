@@ -1,5 +1,6 @@
 package com.databases.shop.services.implementations;
 
+import com.databases.shop.exceptions.order.NoOrderWithSuchIdException;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.OrderFilterBoundsDto;
 import com.databases.shop.models.Order;
 import com.databases.shop.repositories.OrderFilterRepository;
@@ -59,5 +60,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Iterable<Order> findAll() {
         return orderRepository.getAll();
+    }
+
+    @Override
+    public Order findById(Long id) {
+        return orderRepository.findById(id).orElseThrow(() ->  new NoOrderWithSuchIdException(id));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        orderRepository.deleteById(id);
     }
 }

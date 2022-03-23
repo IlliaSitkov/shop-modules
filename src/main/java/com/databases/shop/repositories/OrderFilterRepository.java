@@ -163,7 +163,8 @@ public class OrderFilterRepository {
                         + customerFilter + " AND "
                         + noProviderFilter + " AND "
                         + hasAllNotThoseProductsFilter + " AND "
-                        + moreThenKProviderProds, Order.class);
+                        + moreThenKProviderProds
+                        + "ORDER BY id", Order.class);
 
         LocalDate dateObj = LocalDate.parse(date);
 
