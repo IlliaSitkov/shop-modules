@@ -1,6 +1,5 @@
 package com.databases.shop.repositories;
 
-import com.databases.shop.models.Category;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import org.springframework.data.jpa.repository.JpaRepository;

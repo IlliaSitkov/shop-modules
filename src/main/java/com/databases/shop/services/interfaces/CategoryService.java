@@ -1,5 +1,6 @@
 package com.databases.shop.services.interfaces;
 
+import com.databases.shop.mapstruct.dtos.dataDtos.CategoryFilterBoundsDto;
 import com.databases.shop.models.Category;
 
 import java.util.Set;
@@ -20,4 +21,8 @@ public interface CategoryService {
 
     //Category getCategoryByName(String name) throws Exception;
     Iterable<Category> getAll();
+    CategoryFilterBoundsDto getCategoryFilterBounds();
+
+    Iterable<Category> getCategoriesFilteredByCustomersAndProductsQuantity(int customersQuant, int productsQuant);
+    Iterable<Category> getCategoriesFilteredByCustomersAndProductsQuantityWithMaxProductsQuantity(int customersQuant, int productsQuant);
 }
