@@ -1,6 +1,6 @@
 package com.databases.shop.services.interfaces;
 
-import com.databases.shop.mapstruct.dtos.dataDtos.CategoryFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CategoryFilterBoundsDto;
 import com.databases.shop.models.Category;
 
 import java.util.Set;

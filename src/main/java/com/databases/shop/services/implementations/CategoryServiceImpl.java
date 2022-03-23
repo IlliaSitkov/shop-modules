@@ -2,8 +2,7 @@ package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.category.CategoryIllegalArgumentException;
 import com.databases.shop.exceptions.category.NoCategoryWithSuchId;
-import com.databases.shop.mapstruct.dtos.dataDtos.CategoryFilterBoundsDto;
-import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CategoryFilterBoundsDto;
 import com.databases.shop.models.Category;
 import com.databases.shop.repositories.CategoryRepository;
 import com.databases.shop.repositories.queryinterfaces.MinMaxCustomersQuantity;

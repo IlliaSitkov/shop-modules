@@ -5,7 +5,7 @@ import com.databases.shop.exceptions.category.NoCategoryWithSuchId;
 import com.databases.shop.mapstruct.dtos.category.CategoryGetDto;
 import com.databases.shop.mapstruct.dtos.category.CategoryPostDto;
 import com.databases.shop.mapstruct.dtos.category.CategoryPutDto;
-import com.databases.shop.mapstruct.dtos.dataDtos.CategoryFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CategoryFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.provider.ProviderGetDto;
 import com.databases.shop.mapstruct.mappers.CategoryMapper;
 import com.databases.shop.models.Category;
