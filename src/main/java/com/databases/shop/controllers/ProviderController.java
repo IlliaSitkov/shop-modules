@@ -5,6 +5,7 @@ import com.databases.shop.exceptions.provider.ProviderIllegalArgumentException;
 import com.databases.shop.mapstruct.dtos.provider.ProviderGetDto;
 import com.databases.shop.mapstruct.dtos.provider.ProviderPostDto;
 import com.databases.shop.mapstruct.dtos.provider.ProviderPutDto;
+import com.databases.shop.mapstruct.dtos.provider.ProviderSlimGetDto;
 import com.databases.shop.mapstruct.mappers.ProviderMapper;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
@@ -35,6 +36,12 @@ public class ProviderController {
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
     public Iterable<ProviderGetDto> getProviders(){
         return providerMapper.providersToProvidersGetDto(providerService.getAll());
+    }
+
+    @GetMapping("slim")
+    //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
+    public Iterable<ProviderSlimGetDto> getSlimProviders(){
+        return providerMapper.providersToProvidersSlimGetDto(providerService.getAll());
     }
 
     @GetMapping("/{edrpou}")

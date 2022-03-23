@@ -1,4 +1,4 @@
-package com.databases.shop.mapstruct.dtos.dataDtos;
+package com.databases.shop.mapstruct.dtos.filterBoundsDtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Setter;

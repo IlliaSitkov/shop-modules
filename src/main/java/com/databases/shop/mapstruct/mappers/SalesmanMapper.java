@@ -1,9 +1,6 @@
 package com.databases.shop.mapstruct.mappers;
 
-import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
-import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
-import com.databases.shop.mapstruct.dtos.salesman.SalesmanPutDto;
-import com.databases.shop.mapstruct.dtos.salesman.SalesmanSaveDto;
+import com.databases.shop.mapstruct.dtos.salesman.*;
 import com.databases.shop.models.Salesman;
 import org.mapstruct.Mapper;
 
@@ -13,6 +10,10 @@ public interface SalesmanMapper {
     SalesmanGetDto salesmanToSalesmanGetDto(Salesman salesman);
 
     Iterable<SalesmanGetDto> salesmenToSalesmenGetDto(Iterable<Salesman> salesmen);
+
+    SalesmanSlimGetDto salesmanToSalesmanSlimGetDto(Salesman salesman);
+
+    Iterable<SalesmanSlimGetDto> salesmenToSalesmenSlimGetDto(Iterable<Salesman> salesmen);
 
     SalesmanSaveDto salesmanPostDtoToSalesmanSaveDto(SalesmanPostDto salesmanPostDto);
 

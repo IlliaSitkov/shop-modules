@@ -22,7 +22,7 @@ public class CustomerFilterRepository {
                 "(:prodId < 0 OR id IN (\n" +
                         "SELECT customer.id\n" +
                         "FROM customer\n" +
-                        "WHERE :prodQuant <= (\n" +
+                        "WHERE :prodQuant = (\n" +
                         "    SELECT COUNT(*)\n" +
                         "    FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +
                         "    WHERE customer_id = customer.id AND order_t.status = 'DONE' AND product_articul = :prodId\n" +

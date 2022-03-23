@@ -3,13 +3,9 @@ package com.databases.shop.controllers;
 import com.databases.shop.mapstruct.dtos.customer.CustomerGetDto;
 import com.databases.shop.mapstruct.dtos.customer.CustomerPostDto;
 import com.databases.shop.mapstruct.dtos.customer.CustomerPutDto;
-import com.databases.shop.mapstruct.dtos.dataDtos.CustomerFilterBoundsDto;
-import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
-import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
-import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
-import com.databases.shop.mapstruct.dtos.salesman.SalesmanPutDto;
+import com.databases.shop.mapstruct.dtos.customer.CustomerSlimGetDto;
+import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CustomerFilterBoundsDto;
 import com.databases.shop.mapstruct.mappers.CustomerMapper;
-import com.databases.shop.models.Customer;
 import com.databases.shop.services.interfaces.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +29,12 @@ public class CustomerController {
     @GetMapping
     public Iterable<CustomerGetDto> getAllCustomers() {
         return customerMapper.customersToCustomersGetDto(
+                customerService.findAll());
+    }
+
+    @GetMapping("slim")
+    public Iterable<CustomerSlimGetDto> getAllSlimCustomers() {
+        return customerMapper.customersToCustomersSlimGetDto(
                 customerService.findAll());
     }
 

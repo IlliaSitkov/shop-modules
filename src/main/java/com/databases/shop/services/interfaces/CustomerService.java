@@ -1,12 +1,8 @@
 package com.databases.shop.services.interfaces;
 
 
-import com.databases.shop.mapstruct.dtos.dataDtos.CustomerFilterBoundsDto;
-import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
-import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
-import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
+import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CustomerFilterBoundsDto;
 import com.databases.shop.models.Customer;
-import com.databases.shop.models.Salesman;
 
 public interface CustomerService {
 

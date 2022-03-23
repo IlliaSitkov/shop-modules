@@ -2,6 +2,7 @@ package com.databases.shop;
 
 import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.CustomerFilterRepository;
+import com.databases.shop.repositories.OrderFilterRepository;
 import com.databases.shop.repositories.SalesmanFilterRepository;
 import com.databases.shop.repositories.SalesmanRepository;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -14,6 +15,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.FileInputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @SpringBootApplication
 public class ShopApplication implements CommandLineRunner {
@@ -27,6 +31,9 @@ public class ShopApplication implements CommandLineRunner {
 
 	@Autowired
 	private CustomerFilterRepository customerFilterRepository;
+
+	@Autowired
+	private OrderFilterRepository orderFilterRepository;
 
 
 	public static void main(String[] args) {
@@ -45,6 +52,8 @@ public class ShopApplication implements CommandLineRunner {
 
 		FirebaseApp.initializeApp(options);
 
+
+
 //		System.out.println("--------------------------------------------------");
 //		SalesmanRepository.MinMaxOrderCount minMaxOrderCount = salesmanRepository.minMaxOrderCount();
 
@@ -56,6 +65,36 @@ public class ShopApplication implements CommandLineRunner {
 
 //		salesmanFilterRepository.filterSalesmen(0,0,false).forEach(s -> System.out.println(s.getId()));
 
-		customerFilterRepository.filterCustomers(0,0,-1,-1,0).forEach(s -> System.out.println(s.getId()));
+//		customerFilterRepository.filterCustomers(0,0,-1,-1,0).forEach(s -> System.out.println(s.getId()));
+
+
+
+		//http://localhost:8081/orders/filter?statuses=DONE,NEW,IN_PROGRESS
+		//    &prodNameNum=0&catNum=0&orderCost=0&dateFilterEnabled=false
+		//    &date=1970-01-01&salesmanId=-1&customerId=-1&badProviderId=-1&orderId=-1
+		//    &hasAllNotThoseProds=false&providerId=-1&prodNumK=0
+		String[] statuses = new String[3];
+
+		statuses[0] = "DONE";
+		statuses[1] = "NEW";
+		statuses[2] = "IN_PROGRESS";
+
+
+		orderFilterRepository
+				.filterOrders(List.of("DONE","NEW","IN_PROGRESS"),0,
+						0,0,
+						"1970-01-01",false,
+						-1,-1,
+						-1,-1,
+						-1,0).forEach(o -> System.out.println(o.getId()));
+
+
+
+
+
+
+
+
 	}
+
 }

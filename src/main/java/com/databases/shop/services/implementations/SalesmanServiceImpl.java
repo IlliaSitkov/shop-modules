@@ -2,7 +2,7 @@ package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.salesman.NoSalesmanWithSuchIdException;
 import com.databases.shop.exceptions.salesman.SalesmanRegistrationException;
-import com.databases.shop.mapstruct.dtos.dataDtos.SalesmanFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.filterBoundsDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
 import com.databases.shop.mapstruct.mappers.SalesmanMapper;
@@ -10,8 +10,7 @@ import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.CustomerRepository;
 import com.databases.shop.repositories.SalesmanFilterRepository;
 import com.databases.shop.repositories.SalesmanRepository;
-import com.databases.shop.repositories.queryinterfaces.MinMaxOrderCount;
-import com.databases.shop.repositories.queryinterfaces.MinMaxSalesmanIncome;
+import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.AdminService;
 import com.databases.shop.services.interfaces.SalesmanService;
 import com.databases.shop.utils.Utils;
@@ -85,16 +84,16 @@ public class SalesmanServiceImpl implements SalesmanService {
 
     @Override
     public SalesmanFilterBoundsDto getSalesmanFilterBounds() {
-        MinMaxOrderCount minMaxOrderCount = salesmanRepository.minMaxOrderCount();
-        MinMaxSalesmanIncome minMaxSalesmanIncome = salesmanRepository.minMaxSalesmanIncome();
+        MinMaxValues minMaxOrderCount = salesmanRepository.minMaxOrderCount();
+        MinMaxValues minMaxSalesmanIncome = salesmanRepository.minMaxSalesmanIncome();
 
         SalesmanFilterBoundsDto salesmanFilterBoundsDto = new SalesmanFilterBoundsDto();
 
-        salesmanFilterBoundsDto.setMinOrderCount(minMaxOrderCount.getMinCount());
-        salesmanFilterBoundsDto.setMaxOrderCount(minMaxOrderCount.getMaxCount());
+        salesmanFilterBoundsDto.setMinOrderCount((int)minMaxOrderCount.getMinValue());
+        salesmanFilterBoundsDto.setMaxOrderCount((int)minMaxOrderCount.getMaxValue());
 
-        salesmanFilterBoundsDto.setMinIncome(minMaxSalesmanIncome.getMinIncome());
-        salesmanFilterBoundsDto.setMaxIncome(minMaxSalesmanIncome.getMaxIncome());
+        salesmanFilterBoundsDto.setMinIncome(minMaxSalesmanIncome.getMinValue());
+        salesmanFilterBoundsDto.setMaxIncome(minMaxSalesmanIncome.getMaxValue());
 
         return salesmanFilterBoundsDto;
     }

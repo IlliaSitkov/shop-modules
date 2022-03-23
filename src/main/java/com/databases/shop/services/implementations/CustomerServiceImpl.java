@@ -1,12 +1,11 @@
 package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.customer.NoCustomerWithSuchIdException;
-import com.databases.shop.mapstruct.dtos.dataDtos.CustomerFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CustomerFilterBoundsDto;
 import com.databases.shop.models.Customer;
 import com.databases.shop.repositories.CustomerFilterRepository;
 import com.databases.shop.repositories.CustomerRepository;
-import com.databases.shop.repositories.queryinterfaces.MinMaxAvgOrderCost;
-import com.databases.shop.repositories.queryinterfaces.MinMaxOverallQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.AdminService;
 import com.databases.shop.services.interfaces.CustomerService;
 import com.databases.shop.utils.Utils;
@@ -76,20 +75,16 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerFilterBoundsDto getCustomerFilterBounds() {
 
-        MinMaxAvgOrderCost minMaxAvgOrderCost = customerRepository.getMinMaxAvgOrderCost();
-        MinMaxOverallQuantity minMaxOverallQuantity = customerRepository.getMinMaxOverallQuantity();
-
-        System.out.println(minMaxAvgOrderCost.getMinAvgOrderCost());
-        System.out.println(minMaxAvgOrderCost.getMaxAvgOrderCost());
-
+        MinMaxValues minMaxAvgOrderCost = customerRepository.getMinMaxAvgOrderCost();
+        MinMaxValues minMaxOverallQuantity = customerRepository.getMinMaxOverallQuantity();
 
         CustomerFilterBoundsDto dto = new CustomerFilterBoundsDto();
 
-        dto.setMaxAvg(minMaxAvgOrderCost.getMaxAvgOrderCost());
-        dto.setMinAvg(minMaxAvgOrderCost.getMinAvgOrderCost());
+        dto.setMaxAvg(minMaxAvgOrderCost.getMaxValue());
+        dto.setMinAvg(minMaxAvgOrderCost.getMinValue());
 
-        dto.setMaxOverall(minMaxOverallQuantity.getMaxOverallQuantity());
-        dto.setMinOverall(minMaxOverallQuantity.getMinOverallQuantity());
+        dto.setMaxOverall((int)minMaxOverallQuantity.getMaxValue());
+        dto.setMinOverall((int)minMaxOverallQuantity.getMinValue());
 
         return dto;
     }
