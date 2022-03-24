@@ -1,8 +1,11 @@
 package com.databases.shop.services.interfaces;
 
+import com.databases.shop.mapstruct.dtos.filterBoundsDtos.ProductFilterBoundsDto;
 import com.databases.shop.models.Category;
 import com.databases.shop.models.Product;
 import com.databases.shop.models.Provider;
+
+import java.util.List;
 
 public interface ProductService {
 
@@ -20,4 +23,7 @@ public interface ProductService {
 
     //Product getProductByName(String name) throws Exception;
     Iterable<Product> getAll();
+
+    Iterable<Product> getFilteredProducts(int quantity, double price, List<Long> providersEdrpous, List<Long> categoriesIds);
+    ProductFilterBoundsDto getProductFilterBounds();
 }

@@ -2,6 +2,9 @@ package com.databases.shop.controllers;
 
 import com.databases.shop.exceptions.product.NoProductWithSuchArticul;
 import com.databases.shop.exceptions.product.ProductIllegalArgumentException;
+import com.databases.shop.mapstruct.dtos.category.CategoryGetDto;
+import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CategoryFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.filterBoundsDtos.ProductFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.product.ProductSlimGetDto;
 import com.databases.shop.mapstruct.mappers.ProductMapper;
 import com.databases.shop.mapstruct.dtos.product.ProductGetDto;
@@ -17,8 +20,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
@@ -68,6 +74,18 @@ public class ProductController {
         Product product = productMapper.productPutDtoToProduct(productPutDto);
         product.setArticul(articul);
         return productMapper.productToProductGetDto(productService.updateProduct(product));
+    }
+
+    @GetMapping("/filter/{quantity}/{price}/{providersString}/{categoriesString}")
+    public Iterable<ProductGetDto> getFilteredProducts(@PathVariable("quantity") int quantity, @PathVariable("price") double price, @PathVariable("providersString") String providersString, @PathVariable("categoriesString") String categoriesString){
+        List<Long> providersEdrpous = Arrays.stream(providersString.split(",")).map(Long::parseLong).collect(Collectors.toList());
+        List<Long> categoriesIds = Arrays.stream(categoriesString.split(",")).map(Long::parseLong).collect(Collectors.toList());
+        return productMapper.productsToProductsGetDto(productService.getFilteredProducts(quantity, price, providersEdrpous, categoriesIds));
+    }
+
+    @GetMapping("/filterBounds")
+    public ProductFilterBoundsDto getFilterBounds() {
+        return productService.getProductFilterBounds();
     }
 
     @ExceptionHandler(NoProductWithSuchArticul.class)

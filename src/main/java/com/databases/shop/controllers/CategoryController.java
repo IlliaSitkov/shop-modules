@@ -5,8 +5,10 @@ import com.databases.shop.exceptions.category.NoCategoryWithSuchId;
 import com.databases.shop.mapstruct.dtos.category.CategoryGetDto;
 import com.databases.shop.mapstruct.dtos.category.CategoryPostDto;
 import com.databases.shop.mapstruct.dtos.category.CategoryPutDto;
+import com.databases.shop.mapstruct.dtos.category.CategorySlimGetDto;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CategoryFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.provider.ProviderGetDto;
+import com.databases.shop.mapstruct.dtos.provider.ProviderSlimGetDto;
 import com.databases.shop.mapstruct.mappers.CategoryMapper;
 import com.databases.shop.models.Category;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
@@ -37,6 +39,12 @@ public class CategoryController {
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
     public Iterable<CategoryGetDto> getCategories(){
         return categoryMapper.categoriesToCategoriesGetDto(categoryService.getAll());
+    }
+
+    @GetMapping("slim")
+    //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
+    public Iterable<CategorySlimGetDto> getSlimCategories(){
+        return categoryMapper.categoriesToCategoriesSlimGetDto(categoryService.getAll());
     }
 
     @GetMapping("/{id}")
