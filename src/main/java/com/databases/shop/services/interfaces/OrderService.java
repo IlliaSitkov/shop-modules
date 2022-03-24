@@ -35,4 +35,8 @@ public interface OrderService {
 
 
     Iterable<Order> findAll();
+
+    Order findById(Long id);
+
+    void deleteById(Long id);
 }

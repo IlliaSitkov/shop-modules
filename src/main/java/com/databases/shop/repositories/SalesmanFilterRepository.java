@@ -18,7 +18,7 @@ public class SalesmanFilterRepository {
     public Iterable<Salesman> filterSalesmen(double income, double orders, boolean hasAllCategories) {
 
         String ordersFilter =
-                "id IN (SELECT salesman.id\n" +
+                "id IN (SELECT id\n" +
                         "FROM salesman\n" +
                         "WHERE :orders <= (\n" +
                         "    SELECT COUNT(*)\n" +
@@ -27,12 +27,12 @@ public class SalesmanFilterRepository {
                         "    ))";
 
         String incomeFilter =
-                "id IN (SELECT salesman.id\n" +
-                        "FROM salesman LEFT OUTER JOIN (SELECT salesman_id, prod_price*prod_quantity AS row_cost\n" +
-                        "     FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +
-                        "     WHERE status = 'DONE') RowCosts ON salesman.id = RowCosts.salesman_id\n" +
-                        "GROUP BY salesman.id\n" +
-                        "HAVING SUM(COALESCE(row_cost,0)) >= :income)";
+                "id IN (SELECT id\n" +
+                        "FROM salesman\n" +
+                        "WHERE :income <= (\n" +
+                        "    SELECT COALESCE(SUM(prod_price*prod_quantity),0)\n" +
+                        "    FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +
+                        "    WHERE salesman_id = salesman.id AND status = 'DONE'))";
 
         String hasAllCategoriesFilter =
                 "(:hasAllCategories = FALSE OR NOT EXISTS (\n" +

@@ -1,6 +1,7 @@
 package com.databases.shop.controllers;
 
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.OrderFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.order.OrderGetDto;
 import com.databases.shop.mapstruct.dtos.order.OrderSlimGetDto;
 import com.databases.shop.mapstruct.mappers.OrderMapper;
 import com.databases.shop.services.interfaces.OrderService;
@@ -51,6 +52,22 @@ public class OrderController {
     public Iterable<OrderSlimGetDto> getAllSlimOrders() {
         return orderMapper.ordersToOrdersSlimGetDto(orderService.findAll());
     }
+
+    @GetMapping
+    public Iterable<OrderGetDto> getAllOrders() {
+        return orderMapper.ordersToOrdersGetDto(orderService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public OrderGetDto getOrderById(@PathVariable Long id) {
+        return orderMapper.orderToOrderGetDto(orderService.findById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteOrderById(@PathVariable Long id) {
+        orderService.deleteById(id);
+    }
+
 
 
 
