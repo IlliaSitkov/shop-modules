@@ -18,7 +18,7 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
 
 
     @Query(value =
-            "SELECT MIN(COALESCE(avgCost,0)) AS minValue, MAX(COALESCE(avgCost,0)) AS maxValue\n" +
+            "SELECT COALESCE(MIN(COALESCE(avgCost,0)),0) AS minValue, COALESCE(MAX(COALESCE(avgCost,0)),0) AS maxValue\n" +
             "FROM customer LEFT OUTER JOIN\n" +
             "    (\n" +
             "        SELECT AVG(order_cost) AS avgCost, customer_id\n" +
@@ -34,7 +34,7 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
 
 
     @Query(value =
-            "SELECT MIN(COALESCE(AllQuants.prod_quant_customer,0)) AS minValue, MAX(COALESCE(AllQuants.prod_quant_customer,0)) AS maxValue\n" +
+            "SELECT COALESCE(MIN(COALESCE(AllQuants.prod_quant_customer,0)),0) AS minValue, COALESCE(MAX(COALESCE(AllQuants.prod_quant_customer,0)),0) AS maxValue\n" +
             "FROM customer LEFT OUTER JOIN (\n" +
             "         SELECT customer_id, SUM(prod_quantity) AS prod_quant_customer\n" +
             "         FROM order_t INNER JOIN product_in_order pio on order_t.id = pio.order_id\n" +

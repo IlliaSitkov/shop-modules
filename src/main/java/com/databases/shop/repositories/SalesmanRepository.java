@@ -26,7 +26,7 @@ public interface SalesmanRepository extends JpaRepository<Salesman,Long> {
 
 
     @Query(value =
-            "SELECT MIN(COALESCE(num_ord,0)) AS minValue,MAX(COALESCE(num_ord,0)) AS maxValue\n" +
+            "SELECT COALESCE(MIN(COALESCE(num_ord,0)),0) AS minValue, COALESCE(MAX(COALESCE(num_ord,0)),0) AS maxValue\n" +
             "FROM salesman LEFT OUTER JOIN (\n" +
             "    SELECT salesman_id,COUNT(*) AS num_ord\n" +
             "    FROM order_t\n" +
@@ -36,7 +36,7 @@ public interface SalesmanRepository extends JpaRepository<Salesman,Long> {
 
 
     @Query(value =
-            "SELECT MIN(COALESCE(sum_per_salesman,0)) AS minValue, MAX(COALESCE(sum_per_salesman,0)) AS maxValue\n" +
+            "SELECT COALESCE(MIN(COALESCE(sum_per_salesman,0)),0) AS minValue, COALESCE(MAX(COALESCE(sum_per_salesman,0)),0) AS maxValue\n" +
             "FROM salesman LEFT OUTER JOIN (\n" +
             "    SELECT salesman_id, SUM(prod_price*prod_quantity) AS sum_per_salesman\n" +
             "    FROM order_t INNER JOIN product_in_order pio ON order_t.id = pio.order_id\n" +

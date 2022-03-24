@@ -9,7 +9,7 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
 
     @Query(value =
-            "SELECT MIN(COALESCE(prodNum,0)) AS minValue, MAX(COALESCE(prodNum,0)) AS maxValue\n" +
+            "SELECT COALESCE(MIN(COALESCE(prodNum,0)),0) AS minValue, COALESCE(MAX(COALESCE(prodNum,0)),0) AS maxValue\n" +
             "FROM order_t LEFT OUTER JOIN\n" +
             "     (\n" +
             "         SELECT order_id, COUNT(*) AS prodNum\n" +
@@ -20,7 +20,7 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
 
     @Query(value =
-            "SELECT MIN(COALESCE(catNum,0)) AS minValue, MAX(COALESCE(catNum,0)) AS maxValue\n" +
+            "SELECT COALESCE(MIN(COALESCE(catNum,0)),0) AS minValue, COALESCE(MAX(COALESCE(catNum,0)),0) AS maxValue\n" +
             "FROM order_t LEFT OUTER JOIN (\n" +
             "    SELECT order_id, COUNT(DISTINCT category_fk) AS catNum\n" +
             "    FROM product_in_order INNER JOIN product on product_in_order.product_articul = product.articul\n" +
@@ -30,7 +30,7 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
 
     @Query(value =
-            "SELECT MIN(COALESCE(ordCost,0)) AS minValue, MAX(COALESCE(ordCost,0)) AS maxValue\n" +
+            "SELECT COALESCE(MIN(COALESCE(ordCost,0)),0) AS minValue, COALESCE(MAX(COALESCE(ordCost,0)),0) AS maxValue\n" +
             "FROM order_t LEFT OUTER JOIN (\n" +
             "    SELECT order_id, SUM(prod_quantity*prod_price) AS ordCost\n" +
             "    FROM product_in_order\n" +
