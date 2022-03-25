@@ -14,6 +14,14 @@ public class ProductInOrderId implements Serializable {
     private Long orderId;
     private Long productArticul;
 
+    public ProductInOrderId(Long orderId, Long productArticul) {
+        this.orderId = orderId;
+        this.productArticul = productArticul;
+    }
+
+    public ProductInOrderId() {
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

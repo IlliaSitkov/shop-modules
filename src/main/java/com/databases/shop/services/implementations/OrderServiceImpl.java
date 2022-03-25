@@ -2,14 +2,21 @@ package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.order.NoOrderWithSuchIdException;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.OrderFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.order.OrderPostDto;
+import com.databases.shop.models.Customer;
 import com.databases.shop.models.Order;
+import com.databases.shop.models.OrderStatus;
 import com.databases.shop.repositories.OrderFilterRepository;
 import com.databases.shop.repositories.OrderRepository;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
+import com.databases.shop.services.interfaces.CustomerService;
 import com.databases.shop.services.interfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -17,6 +24,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private CustomerService customerService;
 
     @Autowired
     private OrderFilterRepository orderFilterRepository;
@@ -70,5 +80,42 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteById(Long id) {
         orderRepository.deleteById(id);
+    }
+
+    @Override
+    public Order findByCustomerEmail(String email) {
+        return orderRepository.getByCustomerEmail(email);
+    }
+
+    @Override
+    public Order buyOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() ->  new NoOrderWithSuchIdException(orderId));
+        order.setStatus(OrderStatus.IN_PROGRESS);
+        order.setDate(getCurrentDate());
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public Order save(OrderPostDto orderPostDto) {
+
+        Order o = new Order();
+        Customer customer = customerService.findById(orderPostDto.getCustomerId());
+
+        o.setDate(getCurrentDate());
+        o.setCustomer(customer);
+        o.setStatus(OrderStatus.NEW);
+
+        return orderRepository.save(o);
+    }
+
+    private Date getCurrentDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.MILLISECOND,0);
+
+        return calendar.getTime();
     }
 }

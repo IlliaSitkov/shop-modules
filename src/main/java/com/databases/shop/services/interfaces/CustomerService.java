@@ -21,7 +21,9 @@ public interface CustomerService {
     Iterable<Customer> getFilteredCustomers(int overallProdQuant, int avgOrderCost, long customerId, long productId, int boughtTimes);
 
 
+    boolean existsByEmail(String email);
 
+    Customer findByEmail(String email);
 
-
+    Customer findById(Long customerId);
 }

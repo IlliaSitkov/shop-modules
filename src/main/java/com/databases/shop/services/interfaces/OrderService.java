@@ -2,6 +2,7 @@ package com.databases.shop.services.interfaces;
 
 
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.OrderFilterBoundsDto;
+import com.databases.shop.mapstruct.dtos.order.OrderPostDto;
 import com.databases.shop.models.Order;
 
 import java.util.List;
@@ -39,4 +40,10 @@ public interface OrderService {
     Order findById(Long id);
 
     void deleteById(Long id);
+
+    Order findByCustomerEmail(String email);
+
+    Order buyOrder(Long orderId);
+
+    Order save(OrderPostDto orderPostDto);
 }

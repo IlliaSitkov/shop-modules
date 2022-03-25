@@ -4,6 +4,7 @@ import com.databases.shop.models.Customer;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -43,7 +44,9 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
     MinMaxValues getMinMaxOverallQuantity();
 
 
+    @Query(value = "SELECT case when COUNT(*)> 0 then true else false end FROM customer WHERE contacts_email LIKE :email", nativeQuery = true)
+    boolean existsByEmail(@Param("email") String email);
 
-
-
+    @Query(value = "SELECT * FROM customer WHERE contacts_email LIKE :email", nativeQuery = true)
+    Customer getByEmail(@Param("email") String email);
 }

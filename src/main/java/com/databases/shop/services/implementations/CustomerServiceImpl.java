@@ -107,4 +107,19 @@ public class CustomerServiceImpl implements CustomerService {
     public Iterable<Customer> getFilteredCustomers(int overallProdQuant, int avgOrderCost, long customerId, long productId, int boughtTimes) {
         return customerFilterRepository.filterCustomers(overallProdQuant,avgOrderCost,customerId,productId,boughtTimes);
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return customerRepository.existsByEmail(email);
+    }
+
+    @Override
+    public Customer findByEmail(String email) {
+        return customerRepository.getByEmail(email);
+    }
+
+    @Override
+    public Customer findById(Long customerId) {
+        return customerRepository.findById(customerId).orElseThrow(() -> new NoCustomerWithSuchIdException(customerId));
+    }
 }

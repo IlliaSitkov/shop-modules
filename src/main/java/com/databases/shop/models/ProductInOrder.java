@@ -1,6 +1,7 @@
 package com.databases.shop.models;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.Min;
 
 @Entity
 @Getter
+@Setter
 public class ProductInOrder {
 
 
@@ -31,7 +33,7 @@ public class ProductInOrder {
 
     @Min(0)
     @Column(name = "prod_quantity")
-    private double quantity;
+    private int quantity;
 
 
 }

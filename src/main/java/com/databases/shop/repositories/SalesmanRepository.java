@@ -4,6 +4,7 @@ import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -14,9 +15,10 @@ public interface SalesmanRepository extends JpaRepository<Salesman,Long> {
 
 //    @Query("SELECT case when count(s)> 0 then true else false end FROM Salesman s WHERE s.contacts.email LIKE :email AND s.id = :id")
 //    boolean existsByEmailAndNotId(@Param("email") String email, @Param("id") Long id);
-//
-//    @Query("SELECT case when count(s)> 0 then true else false end FROM Salesman s WHERE s.contacts.email LIKE :email")
-//    boolean existsByEmail(@Param("email") String email);
+
+
+    @Query(value = "SELECT case when COUNT(*)> 0 then true else false end FROM salesman WHERE contacts_email LIKE :email", nativeQuery = true)
+    boolean existsByEmail(@Param("email") String email);
 
 //    @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'DONE' AND o.salesman.id = :id")
 //    int salesmanOrderQuantity(@Param("id") Long id);
@@ -44,6 +46,8 @@ public interface SalesmanRepository extends JpaRepository<Salesman,Long> {
             "    GROUP BY salesman_id) SalesmanCost ON salesman.id = salesman_id", nativeQuery = true)
     MinMaxValues minMaxSalesmanIncome();
 
+    @Query(value = "SELECT * FROM salesman WHERE contacts_email LIKE :email", nativeQuery = true)
+    Salesman getByEmail(@Param("email")String email);
 
 
 //    @Query(value =

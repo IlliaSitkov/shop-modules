@@ -5,6 +5,7 @@ import com.databases.shop.exceptions.salesman.SalesmanRegistrationException;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
+import com.databases.shop.mapstruct.dtos.user.UserGetDto;
 import com.databases.shop.mapstruct.mappers.SalesmanMapper;
 import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.CustomerRepository;
@@ -104,6 +105,11 @@ public class SalesmanServiceImpl implements SalesmanService {
     }
 
     @Override
+    public Salesman findByEmail(String email) {
+        return salesmanRepository.getByEmail(email);
+    }
+
+    @Override
     public Salesman update(Long id, Salesman salesman) {
         salesman.setPersonName(utils.processPersonName(salesman.getPersonName()));
         utils.checkPersonName(salesman.getPersonName());
@@ -113,6 +119,11 @@ public class SalesmanServiceImpl implements SalesmanService {
         s.setPersonName(salesman.getPersonName());
         s.getContacts().setPhoneNumber(salesman.getContacts().getPhoneNumber());
         return salesmanRepository.save(s);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return salesmanRepository.existsByEmail(email);
     }
 
 //    @Override

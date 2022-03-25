@@ -3,6 +3,7 @@ package com.databases.shop.services.interfaces;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.SalesmanFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
+import com.databases.shop.mapstruct.dtos.user.UserGetDto;
 import com.databases.shop.models.Salesman;
 
 public interface SalesmanService {
@@ -15,7 +16,7 @@ public interface SalesmanService {
 
     Salesman update(Long id, Salesman salesman);
 
-//    boolean usersWithEmailExist(String email);
+    boolean existsByEmail(String email);
 
 //    Iterable<Salesman> haveGEDoneOrderQuantity(int quantity);
 
@@ -28,4 +29,5 @@ public interface SalesmanService {
     Iterable<Salesman> getFilteredSalesmen(double income,int orders,boolean hasAllCategories);
 
 
+    Salesman findByEmail(String email);
 }

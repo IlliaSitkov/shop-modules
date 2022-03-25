@@ -1,6 +1,7 @@
 package com.databases.shop.models;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "order_t")
 public class Order {
 

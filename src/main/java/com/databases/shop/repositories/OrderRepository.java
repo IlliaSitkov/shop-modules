@@ -4,6 +4,7 @@ import com.databases.shop.models.Order;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
 
@@ -41,4 +42,15 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
     @Query(value = "SELECT * FROM order_t",nativeQuery = true)
     Iterable<Order> getAll();
+
+
+    @Query(value =
+            "SELECT * " +
+            "FROM order_t " +
+            "WHERE status = 'NEW' AND customer_id IN (" +
+                    "SELECT customer.id " +
+                    "FROM customer " +
+                    "WHERE contacts_email LIKE :email)",nativeQuery = true)
+    Order getByCustomerEmail(@Param("email") String email);
+
 }

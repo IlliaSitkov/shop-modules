@@ -1,5 +1,6 @@
 package com.databases.shop.mapstruct.mappers;
 
+import com.databases.shop.mapstruct.dtos.order.OrderBasketGetDto;
 import com.databases.shop.mapstruct.dtos.order.OrderGetDto;
 import com.databases.shop.mapstruct.dtos.order.OrderSlimGetDto;
 import com.databases.shop.models.Order;
@@ -15,6 +16,9 @@ public interface OrderMapper {
     OrderGetDto orderToOrderGetDto(Order order);
 
     Iterable<OrderGetDto> ordersToOrdersGetDto(Iterable<Order> orders);
+
+    OrderBasketGetDto orderToOrderBasketGetDto(Order order);
+
 
 
 }
