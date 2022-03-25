@@ -4,5 +4,4 @@ public interface MinMaxValues {
 
     double getMinValue();
     double getMaxValue();
-
 }
