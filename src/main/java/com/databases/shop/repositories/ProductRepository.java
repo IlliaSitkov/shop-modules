@@ -3,6 +3,7 @@ package com.databases.shop.repositories;
 import com.databases.shop.models.Product;
 import com.databases.shop.repositories.queryinterfaces.MinMaxPrice;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,18 +34,47 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Iterable<Product> findFilteredProducts(int quantity, double price, List<Long> providersEdrpous, List<Long> categoriesIds);
 
     @Query(value =
-            "SELECT COALESCE (MIN(quantity),0) AS minQuantity, COALESCE (MAX(quantity),0) AS maxQuantity\n" +
+            "SELECT *\n" +
+            "FROM product\n" +
+            "WHERE :quantity <= quantity\n" +
+            "AND :price <= price\n" +
+            "AND provider_fk IN :providersEdrpous\n" +
+            "AND category_fk IN :categoriesIds\n" +
+            "AND NOT EXISTS(\n" +
+                    "SELECT *\n" +
+                    "FROM ((product p INNER JOIN product_in_order ON p.articul = product_articul)\n" +
+                    "   INNER JOIN order_t ON product_in_order.order_id = order_t.id) PRO\n" +
+                    "WHERE PRO.product_articul = :productArticul AND PRO.status = 'DONE' AND NOT EXISTS(\n" +
+                    "   SELECT *\n" +
+                    "   FROM order_t O\n" +
+                    "   WHERE id = PRO.order_id AND EXISTS(\n" +
+                    "       SELECT *\n" +
+                    "       FROM (product_in_order INNER JOIN order_t OT ON product_in_order.order_id = OT.id) PO\n" +
+                    "       WHERE PO.status = 'DONE' AND PO.order_id = O.id AND PO.product_articul = product.articul)))\n" +
+            "AND articul NOT IN(\n" +
+                "SELECT PRO1.product_articul\n" +
+                "FROM ((product p0 INNER JOIN product_in_order ON p0.articul = product_articul)\n" +
+                "   INNER JOIN order_t ON product_in_order.order_id = order_t.id) PRO1\n" +
+                "WHERE PRO1.status = 'DONE' AND PRO1.order_id NOT IN (\n" +
+                    "SELECT PRO2.order_id\n" +
+                    "FROM ((product p1 INNER JOIN product_in_order ON p1.articul = product_articul)\n" +
+                    "   INNER JOIN order_t ON product_in_order.order_id = order_t.id) PRO2\n" +
+                    "WHERE PRO2.status = 'DONE' AND PRO2.product_articul = :productArticul\n))", nativeQuery = true)
+    Iterable<Product> findFilteredProductsWithProduct(int quantity, double price, List<Long> providersEdrpous, List<Long> categoriesIds, Long productArticul);
+
+    @Query(value =
+            "SELECT COALESCE (MIN(quantity),0) AS minValue, COALESCE (MAX(quantity),0) AS maxValue\n" +
                     "FROM\n" +
                     "   (SELECT articul, quantity\n" +
                     "    FROM product\n" +
                     "    GROUP BY articul) AS ProductsQuantities", nativeQuery = true)
-    MinMaxProductsQuantity minMaxProductsQuantity();
+    MinMaxValues minMaxProductsQuantity();
 
     @Query(value =
-            "SELECT COALESCE (MIN(price),0) AS minPrice, COALESCE (MAX(price),0) AS maxPrice\n" +
+            "SELECT COALESCE (MIN(price),0) AS minValue, COALESCE (MAX(price),0) AS maxValue\n" +
                     "FROM\n" +
                     "   (SELECT articul, price\n" +
                     "    FROM product\n" +
                     "    GROUP BY articul) AS ProductsPrices", nativeQuery = true)
-    MinMaxPrice minMaxProductsPrice();
+    MinMaxValues minMaxProductsPrice();
 }

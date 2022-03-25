@@ -11,6 +11,7 @@ import com.databases.shop.repositories.ProductRepository;
 import com.databases.shop.repositories.queryinterfaces.MinMaxCustomersQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxPrice;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.ProductService;
 import com.databases.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,17 +123,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Iterable<Product> getFilteredProductsWithProduct(int quantity, double price, List<Long> providersEdrpous, List<Long> categoriesIds, Long productArticul) {
+        return productRepository.findFilteredProductsWithProduct(quantity, price, providersEdrpous, categoriesIds, productArticul);
+    }
+
+    @Override
     public ProductFilterBoundsDto getProductFilterBounds() {
 
-        MinMaxProductsQuantity minMaxQuantity = productRepository.minMaxProductsQuantity();
-        MinMaxPrice minMaxPrice = productRepository.minMaxProductsPrice();
+        MinMaxValues minMaxQuantity = productRepository.minMaxProductsQuantity();
+        MinMaxValues minMaxPrice = productRepository.minMaxProductsPrice();
 
         ProductFilterBoundsDto productFilterBoundsDto = new ProductFilterBoundsDto();
 
-        productFilterBoundsDto.setMinQuantity(minMaxQuantity.getMinQuantity());
-        productFilterBoundsDto.setMaxQuantity(minMaxQuantity.getMaxQuantity());
-        productFilterBoundsDto.setMinPrice(minMaxPrice.getMinPrice());
-        productFilterBoundsDto.setMaxPrice(minMaxPrice.getMaxPrice());
+        productFilterBoundsDto.setMinQuantity((int)minMaxQuantity.getMinValue());
+        productFilterBoundsDto.setMaxQuantity((int)minMaxQuantity.getMaxValue());
+        productFilterBoundsDto.setMinPrice(minMaxPrice.getMinValue());
+        productFilterBoundsDto.setMaxPrice(minMaxPrice.getMaxValue());
 
         return productFilterBoundsDto;
     }

@@ -7,6 +7,7 @@ import com.databases.shop.models.Contacts;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.ProviderRepository;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.ProviderService;
 import com.databases.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,12 +117,12 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     @Override
-    public Iterable<Provider> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(int quantity, String providerName) {
-        return providerRepository.findHavingAllSalesmenOfProviderAndQuantityOfProductsSoldBigger(quantity, providerName);
+    public Iterable<Provider> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(int quantity, Long providerEdrpou) {
+        return providerRepository.findHavingAllSalesmenOfProviderAndQuantityOfProductsSoldBigger(quantity, providerEdrpou);
     }
 
     @Override
-    public MinMaxProductsQuantity getMinMaxProductsQuantity() {
+    public MinMaxValues getMinMaxProductsQuantity() {
         return providerRepository.minMaxProductsQuantity();
     }
 

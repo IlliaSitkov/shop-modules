@@ -7,6 +7,7 @@ import com.databases.shop.models.Category;
 import com.databases.shop.repositories.CategoryRepository;
 import com.databases.shop.repositories.queryinterfaces.MinMaxCustomersQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.CategoryService;
 import com.databases.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,15 +112,15 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryFilterBoundsDto getCategoryFilterBounds() {
 
-        MinMaxCustomersQuantity minMaxCustomersQuantity = categoryRepository.minMaxCustomersQuantity();
-        MinMaxProductsQuantity minMaxProductsQuantity = categoryRepository.minMaxProductsQuantity();
+        MinMaxValues minMaxCustomersQuantity = categoryRepository.minMaxCustomersQuantity();
+        MinMaxValues minMaxProductsQuantity = categoryRepository.minMaxProductsQuantity();
 
         CategoryFilterBoundsDto categoryFilterBoundsDto = new CategoryFilterBoundsDto();
 
-        categoryFilterBoundsDto.setMinCustomersQuant(minMaxCustomersQuantity.getMinQuantity());
-        categoryFilterBoundsDto.setMaxCustomersQuant(minMaxCustomersQuantity.getMaxQuantity());
-        categoryFilterBoundsDto.setMinProductsQuant(minMaxProductsQuantity.getMinQuantity());
-        categoryFilterBoundsDto.setMaxProductsQuant(minMaxProductsQuantity.getMaxQuantity());
+        categoryFilterBoundsDto.setMinCustomersQuant((int)minMaxCustomersQuantity.getMinValue());
+        categoryFilterBoundsDto.setMaxCustomersQuant((int)minMaxCustomersQuantity.getMaxValue());
+        categoryFilterBoundsDto.setMinProductsQuant((int)minMaxProductsQuantity.getMinValue());
+        categoryFilterBoundsDto.setMaxProductsQuant((int)minMaxProductsQuantity.getMaxValue());
 
         return categoryFilterBoundsDto;
     }
