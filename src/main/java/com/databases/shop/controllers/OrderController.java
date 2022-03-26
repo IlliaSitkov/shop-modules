@@ -87,6 +87,11 @@ public class OrderController {
         return orderMapper.orderToOrderBasketGetDto(orderService.save(orderPostDto));
     }
 
+    @PutMapping("/done")
+    public OrderGetDto markOrderAsDone(@RequestParam Long orderId, @RequestParam Long salesmanId) {
+        return orderMapper.orderToOrderGetDto(orderService.markOrderAsDone(orderId,salesmanId));
+    }
+
 
 
 }

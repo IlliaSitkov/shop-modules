@@ -6,11 +6,13 @@ import com.databases.shop.mapstruct.dtos.order.OrderPostDto;
 import com.databases.shop.models.Customer;
 import com.databases.shop.models.Order;
 import com.databases.shop.models.OrderStatus;
+import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.OrderFilterRepository;
 import com.databases.shop.repositories.OrderRepository;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.CustomerService;
 import com.databases.shop.services.interfaces.OrderService;
+import com.databases.shop.services.interfaces.SalesmanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private SalesmanService salesmanService;
 
     @Autowired
     private OrderFilterRepository orderFilterRepository;
@@ -104,6 +109,20 @@ public class OrderServiceImpl implements OrderService {
         o.setDate(getCurrentDate());
         o.setCustomer(customer);
         o.setStatus(OrderStatus.NEW);
+
+        return orderRepository.save(o);
+    }
+
+    @Override
+    public Order markOrderAsDone(Long orderId, Long salesmanId) {
+
+        Order o = orderRepository.findById(orderId).orElseThrow(() -> new NoOrderWithSuchIdException(orderId));
+
+        Salesman s = salesmanService.findById(salesmanId);
+
+        o.setStatus(OrderStatus.DONE);
+        o.setDate(getCurrentDate());
+        o.setSalesman(s);
 
         return orderRepository.save(o);
     }

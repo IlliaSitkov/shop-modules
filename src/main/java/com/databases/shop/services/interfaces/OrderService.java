@@ -46,4 +46,6 @@ public interface OrderService {
     Order buyOrder(Long orderId);
 
     Order save(OrderPostDto orderPostDto);
+
+    Order markOrderAsDone(Long orderId, Long salesmanId);
 }
