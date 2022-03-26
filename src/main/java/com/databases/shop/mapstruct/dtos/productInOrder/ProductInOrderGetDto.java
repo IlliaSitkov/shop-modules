@@ -1,5 +1,7 @@
 package com.databases.shop.mapstruct.dtos.productInOrder;
 
+import com.databases.shop.mapstruct.dtos.order.OrderGetDto;
+import com.databases.shop.mapstruct.dtos.order.OrderSlimGetDto;
 import com.databases.shop.mapstruct.dtos.product.ProductGetDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -14,6 +16,10 @@ public class ProductInOrderGetDto {
     @JsonProperty("product")
     @NotNull
     private ProductGetDto product;
+
+    @JsonProperty("order")
+    @NotNull
+    private OrderSlimGetDto order;
 
     @JsonProperty("price")
     @NotNull

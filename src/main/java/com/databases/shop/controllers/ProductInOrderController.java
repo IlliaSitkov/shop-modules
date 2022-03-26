@@ -1,8 +1,8 @@
 package com.databases.shop.controllers;
 
 import com.databases.shop.mapstruct.dtos.productInOrder.ProductInOrderGetDto;
+import com.databases.shop.mapstruct.dtos.productInOrder.ProductInOrderPostDto;
 import com.databases.shop.mapstruct.mappers.ProductInOrderMapper;
-import com.databases.shop.models.ProductInOrder;
 import com.databases.shop.services.interfaces.ProductInOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +30,11 @@ public class ProductInOrderController {
     @DeleteMapping("/{orderId}/{productId}")
     public void deleteProductInOrderById(@PathVariable Long orderId, @PathVariable Long productId) {
         productInOrderService.deleteById(orderId,productId);
+    }
+
+    @PostMapping
+    public ProductInOrderGetDto saveProductInOrder(@RequestBody ProductInOrderPostDto productInOrderPostDto) {
+        return mapper.productInOrderToProductInOrderGetDto(productInOrderService.save(productInOrderPostDto));
     }
 
 
