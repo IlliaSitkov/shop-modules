@@ -45,8 +45,8 @@ public class OrderController {
     }
 
     @GetMapping("/filterBounds")
-    public OrderFilterBoundsDto getFilterBounds() {
-        return orderService.getOrderFilterBounds();
+    public OrderFilterBoundsDto getFilterBounds(@RequestParam Long customerId, @RequestParam Long salesmanId) {
+        return orderService.getOrderFilterBounds(customerId,salesmanId);
     }
 
 

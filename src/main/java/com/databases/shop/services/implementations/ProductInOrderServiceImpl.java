@@ -1,6 +1,7 @@
 package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.productInOrder.InsufficientProductQuantityException;
+import com.databases.shop.exceptions.productInOrder.NoProductInOrderWithSuchIdException;
 import com.databases.shop.models.Product;
 import com.databases.shop.models.ProductInOrder;
 import com.databases.shop.models.ProductInOrderId;
@@ -24,6 +25,9 @@ public class ProductInOrderServiceImpl implements ProductInOrderService {
     public ProductInOrder updateProductQuantityInOrder(Long orderId, Long productId, int quantity) {
 
         ProductInOrder productInOrder = productInOrderRepository.getProductInOrderById(orderId,productId);
+
+        if (productInOrder == null) throw new NoProductInOrderWithSuchIdException(orderId,productId);
+
         int initialOrderQuantity = productInOrder.getQuantity();
 
         Product product = productInOrder.getProduct();

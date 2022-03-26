@@ -32,10 +32,10 @@ public class OrderServiceImpl implements OrderService {
     private OrderFilterRepository orderFilterRepository;
 
     @Override
-    public OrderFilterBoundsDto getOrderFilterBounds() {
-        MinMaxValues minMaxProdNum = orderRepository.getMinMaxProdNameNumber();
-        MinMaxValues minMaxCost = orderRepository.getMinMaxCost();
-        MinMaxValues minMaxCatNum = orderRepository.getMinMaxCategoryNumber();
+    public OrderFilterBoundsDto getOrderFilterBounds(Long customerId, Long salesmanId) {
+        MinMaxValues minMaxProdNum = orderRepository.getMinMaxProdNameNumber(customerId,salesmanId);
+        MinMaxValues minMaxCost = orderRepository.getMinMaxCost(customerId,salesmanId);
+        MinMaxValues minMaxCatNum = orderRepository.getMinMaxCategoryNumber(customerId,salesmanId);
 
         OrderFilterBoundsDto dto = new OrderFilterBoundsDto();
 

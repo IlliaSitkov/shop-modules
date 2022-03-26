@@ -19,7 +19,7 @@ public interface OrderService {
 
 //    CustomerGetDto saveCustomerPostDto(CustomerPostDto customerPostDto);
 
-    OrderFilterBoundsDto getOrderFilterBounds();
+    OrderFilterBoundsDto getOrderFilterBounds(Long customerId, Long salesmanId);
 
     Iterable<Order> getFilteredOrders(List<String> statuses,
                                       int prodNameNum,
