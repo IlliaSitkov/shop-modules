@@ -13,6 +13,7 @@ import com.databases.shop.mapstruct.dtos.product.ProductPutDto;
 import com.databases.shop.mapstruct.mappers.ProductMapper;
 import com.databases.shop.models.Product;
 import com.databases.shop.services.implementations.ProductServiceImpl;
+import com.databases.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,9 @@ public class ProductController {
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private Utils utils;
 
     @GetMapping
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
@@ -78,9 +82,16 @@ public class ProductController {
 
     @GetMapping("/filter/{quantity}/{price}/{providersString}/{categoriesString}")
     public Iterable<ProductGetDto> getFilteredProducts(@PathVariable("quantity") int quantity, @PathVariable("price") double price, @PathVariable("providersString") String providersString, @PathVariable("categoriesString") String categoriesString){
-        List<Long> providersEdrpous = Arrays.stream(providersString.split(",")).map(Long::parseLong).collect(Collectors.toList());
-        List<Long> categoriesIds = Arrays.stream(categoriesString.split(",")).map(Long::parseLong).collect(Collectors.toList());
+        List<Long> providersEdrpous = utils.stringToListLong(providersString);
+        List<Long> categoriesIds = utils.stringToListLong(categoriesString);
         return productMapper.productsToProductsGetDto(productService.getFilteredProducts(quantity, price, providersEdrpous, categoriesIds));
+    }
+
+    @GetMapping("/filterWithProduct/{quantity}/{price}/{providersString}/{categoriesString}/{productArticul}")
+    public Iterable<ProductGetDto> getFilteredProductsWithProduct(@PathVariable("quantity") int quantity, @PathVariable("price") double price, @PathVariable("providersString") String providersString, @PathVariable("categoriesString") String categoriesString, @PathVariable("productArticul") Long productArticul){
+        List<Long> providersEdrpous = utils.stringToListLong(providersString);
+        List<Long> categoriesIds = utils.stringToListLong(categoriesString);
+        return productMapper.productsToProductsGetDto(productService.getFilteredProductsWithProduct(quantity, price, providersEdrpous, categoriesIds, productArticul));
     }
 
     @GetMapping("/filterBounds")

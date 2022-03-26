@@ -4,6 +4,7 @@ import com.databases.shop.models.Address;
 import com.databases.shop.models.Contacts;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 
 public interface ProviderService {
 
@@ -23,8 +24,8 @@ public interface ProviderService {
     Iterable<Provider> getAll();
 
     Iterable<Provider> getProvidersFilteredByProductsQuantity(int quantity);
-    Iterable<Provider> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(int quantity, String providerName);
-    MinMaxProductsQuantity getMinMaxProductsQuantity();
+    Iterable<Provider> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(int quantity, Long providerEdrpou);
+    MinMaxValues getMinMaxProductsQuantity();
 
     Iterable<Provider> findName(String name);
 }

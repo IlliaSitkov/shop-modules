@@ -25,5 +25,6 @@ public interface ProductService {
     Iterable<Product> getAll();
 
     Iterable<Product> getFilteredProducts(int quantity, double price, List<Long> providersEdrpous, List<Long> categoriesIds);
+    Iterable<Product> getFilteredProductsWithProduct(int quantity, double price, List<Long> providersEdrpous, List<Long> categoriesIds, Long productArticul);
     ProductFilterBoundsDto getProductFilterBounds();
 }

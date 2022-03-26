@@ -4,6 +4,7 @@ import com.databases.shop.models.Category;
 import com.databases.shop.models.Product;
 import com.databases.shop.repositories.queryinterfaces.MinMaxCustomersQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,44 +24,29 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Iterable<Category> findByNameAndNotId(@Param("id") long id, @Param("name") String name);
 
     @Query(value =
-            "SELECT COALESCE (MIN(products_quantity),0) AS minQuantity, COALESCE (MAX(products_quantity),0) AS maxQuantity\n" +
-                    "FROM\n" +
-                    "    (SELECT SUM(p_quantity) AS products_quantity\n" +
-                    "    FROM\n" +
-                    "        (SELECT category_fk, prod_quantity AS p_quantity\n" +
-                    "        FROM product INNER JOIN product_in_order pio ON product.articul = pio.product_articul\n" +
-                    "        WHERE order_id IN(\n" +
-                    "                            SELECT id\n" +
-                    "                            FROM order_t\n" +
-                    "                            WHERE status = 'DONE')) AS PrQuantities\n" +
-                    "    GROUP BY category_fk) AS ProductsQuantities", nativeQuery = true)
-    MinMaxProductsQuantity minMaxProductsQuantity();
+            "SELECT COALESCE(MIN(COALESCE(products_quantity,0)),0) AS minValue, COALESCE(MAX(COALESCE(products_quantity,0)),0) AS maxValue\n" +
+                    "FROM category LEFT OUTER JOIN (\n" +
+                    "    SELECT category_fk, COUNT(*) AS products_quantity\n" +
+                    "    FROM product\n" +
+                    "    GROUP BY category_fk) AS ProductsQuantities ON category.id = category_fk", nativeQuery = true)
+    MinMaxValues minMaxProductsQuantity();
 
     @Query(value =
-            "SELECT COALESCE (MIN(customers_quantity),0) AS minQuantity, COALESCE (MAX(customers_quantity),0) AS maxQuantity\n" +
-                    "FROM\n" +
-                    "    (SELECT COUNT(DISTINCT cus_id) AS customers_quantity\n" +
-                    "    FROM\n" +
-                    "        (SELECT category_fk, customer_id AS cus_id\n" +
-                    "        FROM product INNER JOIN product_in_order pio ON product.articul = pio.product_articul\n" +
+            "SELECT COALESCE(MIN(COALESCE(customers_quantity,0)),0) AS minValue, COALESCE(MAX(COALESCE(customers_quantity,0)),0) AS maxValue\n" +
+                    "FROM category LEFT OUTER JOIN (\n" +
+                    "    SELECT category_fk, COUNT(DISTINCT customer_id) AS customers_quantity\n" +
+                    "    FROM product INNER JOIN product_in_order pio ON product.articul = pio.product_articul\n" +
                     "              INNER JOIN order_t ON order_t.id = pio.order_id\n" +
-                    "        WHERE status = 'DONE') AS CusIds\n" +
-                    "    GROUP BY category_fk) AS CustomersIds", nativeQuery = true)
-    MinMaxCustomersQuantity minMaxCustomersQuantity();
+                    "    WHERE status = 'DONE'\n" +
+                    "    GROUP BY category_fk) AS CustomersIds ON category.id = category_fk", nativeQuery = true)
+    MinMaxValues minMaxCustomersQuantity();
 
     @Query(value =
             "SELECT *\n" +
             "FROM category\n" +
-            "WHERE :productsQuant <= (SELECT COALESCE(SUM(prod_quantity),0)\n" +
-                                     "FROM product_in_order\n" +
-                                     "WHERE order_id IN(\n" +
-                                         "SELECT order_id\n" +
-                                         "FROM order_t\n" +
-                                         "WHERE status = 'DONE'\n" +
-                                     "AND product_articul IN(\n" +
-                                         "SELECT articul\n" +
-                                         "FROM product\n" +
-                                         "WHERE category_fk = id)))\n" +
+            "WHERE :productsQuant <= (SELECT COALESCE(COUNT(*),0)\n" +
+                                     "FROM product\n" +
+                                     "WHERE category_fk = id)\n" +
             "AND :customersQuant <= (SELECT COALESCE (COUNT(DISTINCT customer_id),0)\n" +
                                     "FROM order_t\n" +
                                     "WHERE status = 'DONE' AND id IN(\n" +
@@ -75,16 +61,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query(value =
             "SELECT *\n" +
             "FROM category\n" +
-            "WHERE :productsQuant <= (SELECT COALESCE(SUM(prod_quantity),0)\n" +
-                                     "FROM product_in_order\n" +
-                                     "WHERE order_id IN(\n" +
-                                        "SELECT order_id\n" +
-                                        "FROM order_t\n" +
-                                        "WHERE status = 'DONE'\n" +
-                                     "AND product_articul IN(\n" +
-                                        "SELECT articul\n" +
-                                        "FROM product\n" +
-                                        "WHERE category_fk = id)))\n" +
+            "WHERE :productsQuant <= (SELECT COALESCE(COUNT(*),0)\n" +
+                                     "FROM product\n" +
+                                     "WHERE category_fk = id)\n" +
              "AND :customersQuant <= (SELECT COALESCE (COUNT(DISTINCT customer_id),0)\n" +
                                      "FROM order_t\n" +
                                      "WHERE status = 'DONE' AND id IN(\n" +
@@ -93,7 +72,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                                         "WHERE product_articul IN(\n" +
                                             "SELECT articul\n" +
                                             "FROM product\n" +
-                                            "WHERE category_fk = id)))" +
+                                            "WHERE category_fk = category.id)))" +
              "AND (SELECT COALESCE (COUNT(DISTINCT customer_id),0)\n" +
                   "FROM order_t\n" +
                   "WHERE status = 'DONE' AND id IN(\n" +
@@ -102,15 +81,13 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                     "WHERE product_articul IN(\n" +
                         "SELECT articul\n" +
                         "FROM product\n" +
-                        "WHERE category_fk = id))) = \n" +
-                 "(SELECT COALESCE (MAX(customers_quantity),0)\n" +
-                 "FROM\n" +
-                    "(SELECT COUNT(DISTINCT cus_id) AS customers_quantity\n" +
-                    "FROM\n" +
-                        "(SELECT category_fk, customer_id AS cus_id\n" +
-                        "FROM product INNER JOIN product_in_order pio ON product.articul = pio.product_articul\n" +
+                        "WHERE category_fk = category.id))) = \n" +
+                 "(SELECT COALESCE(MAX(COALESCE(customers_quantity,0)),0)\n" +
+                 "FROM category LEFT OUTER JOIN (\n" +
+                    "SELECT category_fk, COUNT(DISTINCT customer_id) AS customers_quantity\n" +
+                    "FROM product INNER JOIN product_in_order pio ON product.articul = pio.product_articul\n" +
                              "INNER JOIN order_t ON order_t.id = pio.order_id\n" +
-                        "WHERE status = 'DONE') AS CusIds\n" +
-                        "GROUP BY category_fk) AS CustomersIds)", nativeQuery = true)
+                        "WHERE status = 'DONE'" +
+                        "GROUP BY category_fk) AS CustomersIds ON category.id = category_fk)", nativeQuery = true)
     Iterable<Category> findHavingQuantityOfCustomersBiggerAndQuantityOfProductsSoldBiggerWithMaxProductsQuantity(int customersQuant, int productsQuant);
 }

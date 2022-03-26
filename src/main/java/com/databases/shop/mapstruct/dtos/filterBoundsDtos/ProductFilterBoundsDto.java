@@ -22,5 +22,5 @@ public class ProductFilterBoundsDto {
 
     @JsonProperty("maxPrice")
     @Min(0)
-    private int maxPrice;
+    private double maxPrice;
 }

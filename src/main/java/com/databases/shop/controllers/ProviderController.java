@@ -9,6 +9,7 @@ import com.databases.shop.mapstruct.dtos.provider.ProviderSlimGetDto;
 import com.databases.shop.mapstruct.mappers.ProviderMapper;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
+import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.ProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -76,9 +77,9 @@ public class ProviderController {
         return providerMapper.providersToProvidersGetDto(providerService.getProvidersFilteredByProductsQuantity(quantity));
     }
 
-    @GetMapping("/filterProductsQuantityAndAllSalesmen/{quantity}/{providerName}")
-    public Iterable<ProviderGetDto> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(@PathVariable("quantity") Integer quantity, @PathVariable("providerName") String providerName){
-        return providerMapper.providersToProvidersGetDto(providerService.getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(quantity, providerName));
+    @GetMapping("/filterProductsQuantityAndAllSalesmen/{quantity}/{providerEdrpou}")
+    public Iterable<ProviderGetDto> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(@PathVariable("quantity") Integer quantity, @PathVariable("providerEdrpou") Long providerEdrpou){
+        return providerMapper.providersToProvidersGetDto(providerService.getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(quantity, providerEdrpou));
     }
 
     @GetMapping("/findName/{providerName}")
@@ -87,7 +88,7 @@ public class ProviderController {
     }
 
     @GetMapping("/filterBounds")
-    public MinMaxProductsQuantity getFilterBounds() {
+    public MinMaxValues getFilterBounds() {
         return providerService.getMinMaxProductsQuantity();
     }
 

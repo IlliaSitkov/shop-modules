@@ -8,6 +8,10 @@ import com.databases.shop.exceptions.product.ProductIllegalArgumentException;
 import com.databases.shop.models.*;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class Utils {
 
@@ -108,5 +112,9 @@ public class Utils {
         customer.setContacts(processContacts(customer.getContacts()));
         customer.setPersonName(processPersonName(customer.getPersonName()));
         customer.setAddress(processAddress(customer.getAddress()));
+    }
+
+    public List<Long> stringToListLong(String str) {
+        return Arrays.stream(str.split(",")).map(Long::parseLong).collect(Collectors.toList());
     }
 }
