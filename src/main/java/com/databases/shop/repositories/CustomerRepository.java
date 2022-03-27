@@ -19,18 +19,17 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
 
 
     @Query(value =
-            "SELECT COALESCE(MIN(COALESCE(avgCost,0)),0) AS minValue, COALESCE(MAX(COALESCE(avgCost,0)),0) AS maxValue\n" +
-            "FROM customer LEFT OUTER JOIN\n" +
-            "    (\n" +
-            "        SELECT AVG(order_cost) AS avgCost, customer_id\n" +
-            "        FROM (\n" +
-            "                 SELECT order_id, SUM(prod_quantity * prod_price) AS order_cost\n" +
-            "                 FROM product_in_order\n" +
-            "                 GROUP BY order_id\n" +
-            "             ) OrderCost INNER JOIN order_t ON OrderCost.order_id = order_t.id\n" +
-            "        WHERE status = 'DONE'\n" +
-            "        GROUP BY customer_id\n" +
-            "    ) AllCosts ON customer.id = AllCosts.customer_id", nativeQuery = true)
+            "SELECT COALESCE(MIN(avgCost),0) AS minValue, COALESCE(MAX(avgCost),0) AS maxValue\n" +
+            "FROM (\n" +
+            "         SELECT AVG(COALESCE(order_cost,0)) AS avgCost\n" +
+            "         FROM (\n" +
+            "                  SELECT customer_id, COALESCE(SUM(prod_quantity * prod_price), 0) AS order_cost\n" +
+            "                  FROM order_t LEFT OUTER JOIN product_in_order ON order_id = order_t.id\n" +
+            "                  WHERE status = 'DONE'\n" +
+            "                  GROUP BY id, customer_id\n" +
+            "              ) T RIGHT OUTER JOIN customer ON id = T.customer_id\n" +
+            "         GROUP BY id\n" +
+            "     ) T1", nativeQuery = true)
     MinMaxValues getMinMaxAvgOrderCost();
 
 

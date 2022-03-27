@@ -44,35 +44,27 @@ public class OrderFilterRepository {
 
         String prodNumFilter =
                 "id IN ( -- 2. к-сть найменув. товарів >= вказаній\n" +
-                        "    SELECT id\n" +
-                        "    FROM order_t\n" +
-                        "    WHERE :prodNameNum <= (\n" +
-                        "        SELECT COUNT(*)\n" +
-                        "        FROM product_in_order\n" +
-                        "        WHERE product_in_order.order_id = order_t.id)\n" +
-                        "\n" +
-                        "    )";
+                        "SELECT id\n" +
+                        "FROM order_t LEFT OUTER JOIN product_in_order ON order_t.id = product_in_order.order_id\n" +
+                        "GROUP BY id\n" +
+                        "HAVING COUNT(product_articul) >= :prodNameNum" +
+                        ")";
 
         String categoryNumFilter =
                 "id IN ( -- 3. кількість категорій у замовленні більша або дорівнює вказаній\n" +
-                        "    SELECT id\n" +
-                        "    FROM order_t\n" +
-                        "    WHERE :categNum <= (\n" +
-                        "        SELECT COUNT(DISTINCT category_fk)\n" +
-                        "        FROM product_in_order INNER JOIN product ON product_in_order.product_articul = product.articul\n" +
-                        "        WHERE product_in_order.order_id = order_t.id\n" +
-                        "    )\n" +
-                        "    )";
+                        "SELECT id\n" +
+                        "FROM (product_in_order INNER JOIN product ON product_in_order.product_articul = product.articul)\n" +
+                        "    RIGHT OUTER JOIN order_t ON order_id = id\n" +
+                        "GROUP BY id\n" +
+                        "HAVING COUNT(DISTINCT category_fk) >= :categNum" +
+                        " )";
 
         String costFilter =
                 "id IN ( -- 4. вартість замовлення більше дорівнює вказаній\n" +
-                        "    SELECT id\n" +
-                        "    FROM order_t\n" +
-                        "    WHERE :ordCost <= (\n" +
-                        "        SELECT COALESCE(SUM(prod_quantity*prod_price),0)\n" +
-                        "        FROM product_in_order\n" +
-                        "        WHERE order_id = order_t.id\n" +
-                        "    )\n" +
+                        "SELECT id\n" +
+                        "FROM order_t LEFT OUTER JOIN product_in_order ON order_t.id = product_in_order.order_id\n" +
+                        "GROUP BY id\n" +
+                        "HAVING COALESCE(SUM(prod_quantity*prod_price),0) >= :ordCost" +
                         "    )";
 
         String dateFilter =

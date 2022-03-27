@@ -1,5 +1,6 @@
 package com.databases.shop.services.implementations;
 
+import com.databases.shop.exceptions.order.NoOrderWithSuchCustomerEmailException;
 import com.databases.shop.exceptions.order.NoOrderWithSuchIdException;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.OrderFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.order.OrderPostDto;
@@ -89,7 +90,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findByCustomerEmail(String email) {
-        return orderRepository.getByCustomerEmail(email);
+        Order o = orderRepository.getByCustomerEmail(email);
+        if (o == null) throw new NoOrderWithSuchCustomerEmailException(email);
+        return o;
     }
 
     @Override
