@@ -24,7 +24,7 @@ public interface ProviderService {
     Iterable<Provider> getAll();
 
     Iterable<Provider> getProvidersFilteredByProductsQuantity(int quantity);
-    Iterable<Provider> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(int quantity, Long providerEdrpou);
+    Iterable<Provider> getProvidersFilteredByProductsQuantityAndJustSalesmenOfProvider(int quantity, Long providerEdrpou);
     MinMaxValues getMinMaxProductsQuantity();
 
     Iterable<Provider> findName(String name);

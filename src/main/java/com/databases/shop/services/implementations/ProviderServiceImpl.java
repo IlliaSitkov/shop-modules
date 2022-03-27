@@ -117,8 +117,8 @@ public class ProviderServiceImpl implements ProviderService {
     }
 
     @Override
-    public Iterable<Provider> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(int quantity, Long providerEdrpou) {
-        return providerRepository.findHavingAllSalesmenOfProviderAndQuantityOfProductsSoldBigger(quantity, providerEdrpou);
+    public Iterable<Provider> getProvidersFilteredByProductsQuantityAndJustSalesmenOfProvider(int quantity, Long providerEdrpou) {
+        return providerRepository.findHavingJustSalesmenOfProviderAndQuantityOfProductsSoldBigger(quantity, providerEdrpou);
     }
 
     @Override

@@ -77,9 +77,9 @@ public class ProviderController {
         return providerMapper.providersToProvidersGetDto(providerService.getProvidersFilteredByProductsQuantity(quantity));
     }
 
-    @GetMapping("/filterProductsQuantityAndAllSalesmen/{quantity}/{providerEdrpou}")
-    public Iterable<ProviderGetDto> getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(@PathVariable("quantity") Integer quantity, @PathVariable("providerEdrpou") Long providerEdrpou){
-        return providerMapper.providersToProvidersGetDto(providerService.getProvidersFilteredByProductsQuantityAndAllSalesmenOfProvider(quantity, providerEdrpou));
+    @GetMapping("/filterProductsQuantityAndJustSalesmen/{quantity}/{providerEdrpou}")
+    public Iterable<ProviderGetDto> getProvidersFilteredByProductsQuantityAndJustSalesmenOfProvider(@PathVariable("quantity") Integer quantity, @PathVariable("providerEdrpou") Long providerEdrpou){
+        return providerMapper.providersToProvidersGetDto(providerService.getProvidersFilteredByProductsQuantityAndJustSalesmenOfProvider(quantity, providerEdrpou));
     }
 
     @GetMapping("/findName/{providerName}")
