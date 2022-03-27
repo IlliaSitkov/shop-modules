@@ -22,9 +22,9 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
             "SELECT COALESCE(MIN(COALESCE(avgCost,0)),0) AS minValue, COALESCE(MAX(COALESCE(avgCost,0)),0) AS maxValue\n" +
             "FROM customer LEFT OUTER JOIN\n" +
             "    (\n" +
-            "        SELECT AVG(order_cost) AS avgCost, customer_id\n" +
+            "        SELECT AVG(order_cost1) AS avgCost, customer_id\n" +
             "        FROM (\n" +
-            "                 SELECT order_id, SUM(prod_quantity * prod_price) AS order_cost\n" +
+            "                 SELECT order_id, SUM(prod_quantity * prod_price) AS order_cost1\n" +
             "                 FROM product_in_order\n" +
             "                 GROUP BY order_id\n" +
             "             ) OrderCost INNER JOIN order_t ON OrderCost.order_id = order_t.id\n" +

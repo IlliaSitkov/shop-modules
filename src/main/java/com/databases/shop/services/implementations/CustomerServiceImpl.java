@@ -59,7 +59,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean delete(Long id) {
         if (customerRepository.existsById(id)) {
-            Customer c = customerRepository.getById(id);
+            customerRepository.deleteById(id);
+            return true;
+            /*Customer c = customerRepository.getById(id);
             try {
                 adminService.deleteUserAccountByEmail(c.getContacts().getEmail());
                 adminService.deleteUserFromFirestore(c.getContacts().getEmail());
@@ -67,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
                 return true;
             } catch (Exception e) {
                 return false;
-            }
+            }*/
         };
         return false;
     }
