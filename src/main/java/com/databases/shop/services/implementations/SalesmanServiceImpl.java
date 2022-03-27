@@ -47,7 +47,7 @@ public class SalesmanServiceImpl implements SalesmanService {
 
     @Override
     public Salesman findById(Long id) {
-        return null;
+        return salesmanRepository.findById(id).orElseThrow(() -> new NoSalesmanWithSuchIdException(id));
     }
 
     @Override
