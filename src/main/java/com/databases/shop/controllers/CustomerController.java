@@ -38,6 +38,11 @@ public class CustomerController {
                 customerService.findAll());
     }
 
+    @GetMapping("/byEmail/{email}")
+    public CustomerGetDto getCustomerByEmail(@PathVariable("email")String email) {
+        return customerMapper.customerToCustomerGetDto(customerService.findByEmail(email));
+    }
+
     @GetMapping("/filter")
     public Iterable<CustomerGetDto> getFilteredCustomers(
             @RequestParam("overallQuant") int overallQuant,

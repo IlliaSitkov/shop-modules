@@ -84,6 +84,6 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
                                     "SELECT articul\n" +
                                     "FROM product\n" +
                                     "WHERE provider_fk = prov.edrpou)))", nativeQuery = true)
-    Iterable<Provider> findHavingAllSalesmenOfProviderAndQuantityOfProductsSoldBigger(@Param("quantity") int quantity, @Param("providerEdrpou") Long providerEdrpou);
+    Iterable<Provider> findHavingJustSalesmenOfProviderAndQuantityOfProductsSoldBigger(@Param("quantity") int quantity, @Param("providerEdrpou") Long providerEdrpou);
 
 }
