@@ -83,7 +83,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                         "SELECT articul\n" +
                         "FROM product\n" +
                         "WHERE category_fk = category.id))) = \n" +
-                    "(SELECT COALESCE(MIN(COALESCE(products_quantity,0)),0)\n" +
+                    "(SELECT COALESCE(MAX(COALESCE(products_quantity,0)),0)\n" +
                     "FROM category LEFT OUTER JOIN (\n" +
                     "    SELECT category_fk, SUM(prod_quantity) AS products_quantity\n" +
                     "    FROM product INNER JOIN product_in_order pio ON product.articul = pio.product_articul\n" +

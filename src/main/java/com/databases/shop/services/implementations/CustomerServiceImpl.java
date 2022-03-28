@@ -3,11 +3,15 @@ package com.databases.shop.services.implementations;
 import com.databases.shop.exceptions.customer.NoCustomerWithSuchIdException;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CustomerFilterBoundsDto;
 import com.databases.shop.models.Customer;
+import com.databases.shop.models.Order;
+import com.databases.shop.models.OrderStatus;
 import com.databases.shop.repositories.CustomerFilterRepository;
 import com.databases.shop.repositories.CustomerRepository;
+import com.databases.shop.repositories.OrderRepository;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.AdminService;
 import com.databases.shop.services.interfaces.CustomerService;
+import com.databases.shop.services.interfaces.OrderService;
 import com.databases.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,8 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private AdminService adminService;
 
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Override
     public Iterable<Customer> findAll() {
@@ -59,6 +65,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean delete(Long id) {
         if (customerRepository.existsById(id)) {
+            for (Order order: orderRepository.findByCustomerId(id)){
+                if (order.getStatus() == OrderStatus.NEW) {
+                    orderRepository.delete(order);
+                }
+                else {
+                    order.setCustomer(null);
+                    orderRepository.save(order);
+                }
+            }
             customerRepository.deleteById(id);
             return true;
             /*Customer c = customerRepository.getById(id);
