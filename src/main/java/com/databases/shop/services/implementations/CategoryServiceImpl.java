@@ -5,8 +5,6 @@ import com.databases.shop.exceptions.category.NoCategoryWithSuchId;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CategoryFilterBoundsDto;
 import com.databases.shop.models.Category;
 import com.databases.shop.repositories.CategoryRepository;
-import com.databases.shop.repositories.queryinterfaces.MinMaxCustomersQuantity;
-import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.CategoryService;
 import com.databases.shop.utils.Utils;

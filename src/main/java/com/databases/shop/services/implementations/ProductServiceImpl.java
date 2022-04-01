@@ -2,15 +2,11 @@ package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.product.NoProductWithSuchArticul;
 import com.databases.shop.exceptions.product.ProductIllegalArgumentException;
-import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CategoryFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.ProductFilterBoundsDto;
 import com.databases.shop.models.Category;
 import com.databases.shop.models.Product;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.ProductRepository;
-import com.databases.shop.repositories.queryinterfaces.MinMaxCustomersQuantity;
-import com.databases.shop.repositories.queryinterfaces.MinMaxPrice;
-import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.ProductService;
 import com.databases.shop.utils.Utils;
