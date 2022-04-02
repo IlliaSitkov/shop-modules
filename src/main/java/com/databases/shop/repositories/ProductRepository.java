@@ -79,9 +79,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     MinMaxValues minMaxProductsPrice();
 
     @Query(value = "SELECT articul, p.name, COALESCE(SUM(prod_quantity),0) AS soldQuantity, COALESCE(SUM(prod_quantity*prod_price),0) AS soldCost, COALESCE(AVG(prod_quantity),0) AS averageQuantityInOrder, COALESCE(COUNT(DISTINCT customer_id),0) AS quantityOfCustomers\n" +
-                   "FROM (product p JOIN product_in_order ON articul = product_articul)\n" +
-                   "      JOIN order_t ON id = order_id\n" +
-                   "WHERE status = 'DONE' AND date_created >= :dateStart AND date_created <= :dateEnd\n" +
+                   "FROM product p LEFT OUTER JOIN\n" +
+                         "(product_in_order JOIN order_t ON id = order_id) ON articul = product_articul\n" +
+                   "WHERE (status = 'DONE' OR status IS NULL)\n" +
+                   "AND (date_created >= :dateStart AND date_created <= :dateEnd) OR date_created IS NULL\n" +
                    "GROUP BY articul", nativeQuery = true)
     Iterable<ProductReportValues> productReport(LocalDate dateStart, LocalDate dateEnd);
 }

@@ -69,6 +69,7 @@ public class ProductController {
     @PostMapping
     //@PreAuthorize("hasRole('ADMIN')")
     public ProductGetDto addProduct(@Valid @RequestBody ProductPostDto productPostDto){
+        productService.createReport();
         return productMapper.productToProductGetDto(productService.addProduct(productMapper.productPostDtoToProduct(productPostDto)));
     }
 
