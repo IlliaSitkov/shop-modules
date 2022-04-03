@@ -8,7 +8,6 @@ import com.databases.shop.mapstruct.dtos.provider.ProviderPutDto;
 import com.databases.shop.mapstruct.dtos.provider.ProviderSlimGetDto;
 import com.databases.shop.mapstruct.mappers.ProviderMapper;
 import com.databases.shop.models.Provider;
-import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.ProviderService;
 import org.springframework.beans.factory.annotation.Autowired;

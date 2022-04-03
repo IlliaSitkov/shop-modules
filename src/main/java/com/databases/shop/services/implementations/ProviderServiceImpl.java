@@ -6,7 +6,6 @@ import com.databases.shop.models.Address;
 import com.databases.shop.models.Contacts;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.ProviderRepository;
-import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.services.interfaces.ProviderService;
 import com.databases.shop.utils.Utils;

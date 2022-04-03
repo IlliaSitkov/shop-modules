@@ -3,7 +3,6 @@ package com.databases.shop.services.interfaces;
 import com.databases.shop.models.Address;
 import com.databases.shop.models.Contacts;
 import com.databases.shop.models.Provider;
-import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 
 public interface ProviderService {

@@ -2,22 +2,29 @@ package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.product.NoProductWithSuchArticul;
 import com.databases.shop.exceptions.product.ProductIllegalArgumentException;
-import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CategoryFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.ProductFilterBoundsDto;
 import com.databases.shop.models.Category;
 import com.databases.shop.models.Product;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.ProductRepository;
-import com.databases.shop.repositories.queryinterfaces.MinMaxCustomersQuantity;
-import com.databases.shop.repositories.queryinterfaces.MinMaxPrice;
-import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
+import com.databases.shop.repositories.queryinterfaces.ProductReportValues;
 import com.databases.shop.services.interfaces.ProductService;
 import com.databases.shop.utils.Utils;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -141,5 +148,56 @@ public class ProductServiceImpl implements ProductService {
         productFilterBoundsDto.setMaxPrice(minMaxPrice.getMaxValue());
 
         return productFilterBoundsDto;
+    }
+
+    private void addTableHeader(PdfPTable table, Font font) {
+        Stream.of("Артикул", "Назва", "Продана к-ть", "Виручка", "Середня к-ть в замовленні", "К-ть покупців")
+                .forEach(columnTitle -> {
+                    PdfPCell header = new PdfPCell();
+                    header.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    header.setBorderWidth(2);
+                    header.setPhrase(new Phrase(columnTitle, font));
+                    table.addCell(header);
+                });
+    }
+
+    private void addRows(PdfPTable table, Iterable<ProductReportValues> productReportValues, Font font) {
+        for (ProductReportValues prRV: productReportValues) {
+            table.addCell(new Phrase(prRV.getArticul() + "", font));
+            table.addCell(new Phrase(prRV.getName(), font));
+            table.addCell(new Phrase(prRV.getSoldQuantity() + "", font));
+            table.addCell(new Phrase(prRV.getSoldCost() + "", font));
+            table.addCell(new Phrase(prRV.getAverageQuantityInOrder() + "", font));
+            table.addCell(new Phrase(prRV.getQuantityOfCustomers() + "", font));
+        }
+    }
+
+    @Override
+    public void createReport() {
+        LocalDate startDate = LocalDate.parse("1970-03-02");
+        LocalDate endDate = LocalDate.parse("2022-04-04");
+        Iterable<ProductReportValues> productReportValues = productRepository.productReport(startDate, endDate);
+        try {
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream("productReport.pdf"));
+            document.open();
+            BaseFont baseFont = BaseFont.createFont("C:\\Windows\\Fonts\\arial.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+            Font font = new Font(baseFont, 16);
+            Paragraph p = new Paragraph("Звіт по продуктах за період " + startDate + " - " + endDate + "\n", font);
+            p.setAlignment(Element.ALIGN_CENTER);
+            p.setSpacingAfter(40f);
+            document.add(p);
+
+            PdfPTable table = new PdfPTable(6);
+            addTableHeader(table, font);
+            addRows(table, productReportValues, font);
+            document.add(table);
+            document.close();
+        }
+        catch (FileNotFoundException | DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

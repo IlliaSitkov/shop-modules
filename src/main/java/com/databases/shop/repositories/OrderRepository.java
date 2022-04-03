@@ -84,4 +84,10 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
                     "WHERE contacts_email LIKE :email)",nativeQuery = true)
     Order getByCustomerEmail(@Param("email") String email);
 
+    @Query(value =
+            "SELECT * " +
+            "FROM order_t " +
+            "WHERE customer_id = :customerId",nativeQuery = true)
+    Iterable<Order> findByCustomerId(@Param("customerId") Long customerId);
+
 }

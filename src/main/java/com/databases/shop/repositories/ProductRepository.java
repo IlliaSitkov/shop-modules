@@ -1,14 +1,14 @@
 package com.databases.shop.repositories;
 
 import com.databases.shop.models.Product;
-import com.databases.shop.repositories.queryinterfaces.MinMaxPrice;
-import com.databases.shop.repositories.queryinterfaces.MinMaxProductsQuantity;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
+import com.databases.shop.repositories.queryinterfaces.ProductReportValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -77,4 +77,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     "    FROM product\n" +
                     "    GROUP BY articul) AS ProductsPrices", nativeQuery = true)
     MinMaxValues minMaxProductsPrice();
+
+    @Query(value = "SELECT articul, p.name, COALESCE(SUM(prod_quantity),0) AS soldQuantity, COALESCE(SUM(prod_quantity*prod_price),0) AS soldCost, COALESCE(AVG(prod_quantity),0) AS averageQuantityInOrder, COALESCE(COUNT(DISTINCT customer_id),0) AS quantityOfCustomers\n" +
+                   "FROM product p LEFT OUTER JOIN\n" +
+                         "(product_in_order JOIN order_t ON id = order_id) ON articul = product_articul\n" +
+                   "WHERE (status = 'DONE' OR status IS NULL)\n" +
+                   "AND (date_created >= :dateStart AND date_created <= :dateEnd) OR date_created IS NULL\n" +
+                   "GROUP BY articul", nativeQuery = true)
+    Iterable<ProductReportValues> productReport(LocalDate dateStart, LocalDate dateEnd);
 }
