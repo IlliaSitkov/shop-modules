@@ -56,31 +56,28 @@ public class CustomerFilterRepository {
         String hasAllOnlyCategoriesFilter =
                 "(:customerId < 0 OR NOT EXISTS(\n" +
                         "SELECT *\n" +
-                        "        FROM (((category INNER JOIN product p on category.id = p.category_fk)\n" +
-                        "            INNER JOIN product_in_order ON p.articul = product_articul)\n" +
+                        "FROM customer\n" +
+                        "WHERE NOT EXISTS(\n" +
+                        "        SELECT category_fk\n" +
+                        "        FROM ((product INNER JOIN product_in_order ON product.articul = product_articul)\n" +
                         "            INNER JOIN order_t ON product_in_order.order_id = order_t.id) CPRO\n" +
                         "        WHERE CPRO.customer_id = :customerId AND CPRO.status = 'DONE' AND NOT EXISTS(\n" +
                         "                SELECT *\n" +
-                        "                FROM product P\n" +
-                        "                WHERE P.category_fk = CPRO.category_fk AND EXISTS(\n" +
-                        "                        SELECT *\n" +
-                        "                        FROM (product_in_order INNER JOIN order_t OT ON product_in_order.order_id = OT.id) PO\n" +
-                        "                        WHERE PO.status = 'DONE' AND PO.product_articul = P.articul AND PO.customer_id = customer.id\n" +
-                        "                    )\n" +
-                        "            )\n" +
-                        "    ) AND customer.id NOT IN (\n" +
-                        "        SELECT CPRO1.customer_id\n" +
-                        "        FROM (((category INNER JOIN product p2 ON id = p2.category_fk)\n" +
-                        "            INNER JOIN product_in_order pio ON p2.articul = pio.product_articul)\n" +
-                        "            INNER JOIN order_t ON pio.order_id = order_t.id) CPRO1\n" +
-                        "        WHERE CPRO1.status = 'DONE' AND CPRO1.category_fk NOT IN (\n" +
-                        "            SELECT CPRO2.category_fk\n" +
-                        "            FROM (((category INNER JOIN product p ON category.id = p.category_fk)\n" +
-                        "                INNER JOIN product_in_order ON p.articul = product_in_order.product_articul)\n" +
-                        "                INNER JOIN order_t ON product_in_order.order_id = order_t.id) CPRO2\n" +
-                        "            WHERE CPRO2.status = 'DONE' AND CPRO2.customer_id = :customerId\n" +
-                        "        )\n" +
-                        "    ))";
+                        "                FROM ((product INNER JOIN product_in_order ON product.articul = product_articul)\n" +
+                        "                    INNER JOIN order_t ON product_in_order.order_id = order_t.id) CPRO1\n" +
+                        "                WHERE CPRO1.category_fk = CPRO.category_fk AND CPRO1.status = 'DONE' AND CPRO1.customer_id = customer.id\n" +
+                        "                )\n" +
+                        "    ) AND NOT EXISTS (\n" +
+                        "    SELECT category_fk\n" +
+                        "    FROM ((product INNER JOIN product_in_order ON product.articul = product_articul)\n" +
+                        "        INNER JOIN order_t ON product_in_order.order_id = order_t.id) CPRO\n" +
+                        "    WHERE CPRO.status = 'DONE' AND CPRO.customer_id = customer.id AND category_fk NOT IN (\n" +
+                        "        SELECT CPRO1.category_fk\n" +
+                        "        FROM ((product INNER JOIN product_in_order ON product.articul = product_articul)\n" +
+                        "            INNER JOIN order_t ON product_in_order.order_id = order_t.id) CPRO1\n" +
+                        "        WHERE CPRO1.status = 'DONE' AND CPRO1.customer_id = :customerId\n" +
+                        "    )\n" +
+                        ")))";
 
         Query query = entityManager.createNativeQuery(
                 "SELECT *\n" +

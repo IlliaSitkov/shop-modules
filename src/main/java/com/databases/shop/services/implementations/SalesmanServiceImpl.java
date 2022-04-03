@@ -142,9 +142,12 @@ public class SalesmanServiceImpl implements SalesmanService {
                 salesmanRepository.deleteById(id);
                 return true;
             } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Salesman's account could not have been deleted");
                 return false;
             }
         };
+        System.out.println("Salesman does not exist");
         return false;
 
     }
