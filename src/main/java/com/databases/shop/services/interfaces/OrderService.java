@@ -5,6 +5,7 @@ import com.databases.shop.mapstruct.dtos.filterBoundsDtos.OrderFilterBoundsDto;
 import com.databases.shop.mapstruct.dtos.order.OrderPostDto;
 import com.databases.shop.models.Order;
 
+import java.util.Date;
 import java.util.List;
 
 public interface OrderService {

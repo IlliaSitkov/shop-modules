@@ -35,7 +35,7 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
 
 
     @Query(value =
-            "SELECT COALESCE(MIN(COALESCE(avgCost,0)),0) AS minValue, COALESCE(MAX(COALESCE(avgCost,0)),0) AS maxValue\n" +
+            "SELECT ROUND(COALESCE(MIN(COALESCE(CAST(avgCost AS numeric),0)),0),2) AS minValue, ROUND(COALESCE(MAX(COALESCE(CAST(avgCost AS numeric),0)),0),2) AS maxValue\n" +
                     "FROM customer LEFT OUTER JOIN\n" +
                     "    (\n" +
                     "        SELECT AVG(order_cost1) AS avgCost, customer_id\n" +

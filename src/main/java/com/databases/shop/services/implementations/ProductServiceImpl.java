@@ -181,7 +181,7 @@ public class ProductServiceImpl implements ProductService {
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream("productReport.pdf"));
             document.open();
-            BaseFont baseFont = BaseFont.createFont("C:\\Windows\\Fonts\\arial.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+            BaseFont baseFont = BaseFont.createFont("/System/Library/Fonts/SFNSRounded.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
             Font font = new Font(baseFont, 16);
             Paragraph p = new Paragraph("Звіт по продуктах за період " + startDate + " - " + endDate + "\n", font);
             p.setAlignment(Element.ALIGN_CENTER);

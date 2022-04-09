@@ -11,16 +11,29 @@ import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.OrderFilterRepository;
 import com.databases.shop.repositories.OrderRepository;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
+import com.databases.shop.repositories.queryinterfaces.OrderGroupReportValues;
+import com.databases.shop.repositories.queryinterfaces.OrderReportValues;
+import com.databases.shop.repositories.queryinterfaces.ProductReportValues;
 import com.databases.shop.services.interfaces.CustomerService;
 import com.databases.shop.services.interfaces.OrderService;
 import com.databases.shop.services.interfaces.SalesmanService;
+import com.databases.shop.utils.Utils;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -36,6 +49,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderFilterRepository orderFilterRepository;
+
+    @Autowired
+    private Utils utils;
 
     @Override
     public OrderFilterBoundsDto getOrderFilterBounds(Long customerId, Long salesmanId) {
@@ -90,6 +106,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findByCustomerEmail(String email) {
+        System.out.println(email);
         Order o = orderRepository.getByCustomerEmail(email);
         if (o == null) throw new NoOrderWithSuchCustomerEmailException(email);
         return o;
@@ -99,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
     public Order buyOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() ->  new NoOrderWithSuchIdException(orderId));
         order.setStatus(OrderStatus.IN_PROGRESS);
-        order.setDate(getCurrentDate());
+        order.setDate(utils.getCurrentDate());
         return orderRepository.save(order);
     }
 
@@ -109,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
         Order o = new Order();
         Customer customer = customerService.findById(orderPostDto.getCustomerId());
 
-        o.setDate(getCurrentDate());
+        o.setDate(utils.getCurrentDate());
         o.setCustomer(customer);
         o.setStatus(OrderStatus.NEW);
 
@@ -124,20 +141,19 @@ public class OrderServiceImpl implements OrderService {
         Salesman s = salesmanService.findById(salesmanId);
 
         o.setStatus(OrderStatus.DONE);
-        o.setDate(getCurrentDate());
+        o.setDate(utils.getCurrentDate());
         o.setSalesman(s);
 
         return orderRepository.save(o);
     }
 
-    private Date getCurrentDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.set(Calendar.HOUR_OF_DAY,0);
-        calendar.set(Calendar.MINUTE,0);
-        calendar.set(Calendar.SECOND,0);
-        calendar.set(Calendar.MILLISECOND,0);
 
-        return calendar.getTime();
-    }
+
+
+
+
+
+
+
+
 }

@@ -45,6 +45,7 @@ public class ProductController {
     @GetMapping
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
     public Iterable<ProductGetDto> getProducts(){
+        productService.createReport();
         return productMapper.productsToProductsGetDto(productService.getAll());
     }
 

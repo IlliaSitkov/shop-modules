@@ -8,9 +8,14 @@ import com.databases.shop.mapstruct.dtos.order.OrderSlimGetDto;
 import com.databases.shop.mapstruct.mappers.OrderMapper;
 import com.databases.shop.services.interfaces.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -66,6 +71,14 @@ public class OrderController {
     public Iterable<OrderGetDto> getAllOrders() {
         return orderMapper.ordersToOrdersGetDto(orderService.findAll());
     }
+
+//    @GetMapping("/report")
+//    public void generateReport(@RequestParam String dateStart, @RequestParam String dateEnd, @RequestParam List<String> statuses) {
+//        orderService.generateReport(dateStart,dateEnd, statuses);
+//    }
+
+
+
 
     @GetMapping("/{id}")
     public OrderGetDto getOrderById(@PathVariable Long id) {

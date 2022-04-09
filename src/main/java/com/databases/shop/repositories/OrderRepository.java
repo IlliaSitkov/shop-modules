@@ -1,10 +1,17 @@
 package com.databases.shop.repositories;
 
 import com.databases.shop.models.Order;
+import com.databases.shop.models.OrderStatus;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
+import com.databases.shop.repositories.queryinterfaces.OrderGroupReportValues;
+import com.databases.shop.repositories.queryinterfaces.OrderReportValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
 
@@ -61,7 +68,7 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 //    MinMaxValues getMinMaxCost();
 
     @Query(value =
-            "SELECT COALESCE(MIN(ordCost),0) AS minValue, COALESCE(MAX(ordCost),0) AS maxValue\n" +
+            "SELECT ROUND(COALESCE(MIN(CAST(ordCost AS numeric)),0),2) AS minValue, ROUND(COALESCE(MAX(CAST(ordCost AS numeric)),0),2) AS maxValue\n" +
             "FROM (SELECT COALESCE(SUM(prod_quantity*prod_price),0) AS ordCost\n" +
             "      FROM order_t INNER JOIN product_in_order ON order_t.id = product_in_order.order_id\n" +
             "      WHERE (:customerId < 0 OR  :customerId = customer_id)\n" +
@@ -90,4 +97,81 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
             "WHERE customer_id = :customerId",nativeQuery = true)
     Iterable<Order> findByCustomerId(@Param("customerId") Long customerId);
 
+
+    @Query(value =
+            "SELECT id AS orderId,\n" +
+            "       COUNT(product_articul) AS productNamesNum,\n" +
+            "       COUNT(DISTINCT category_fk) AS categoriesNum,\n" +
+            "       COUNT(DISTINCT provider_fk) AS providersNum,\n" +
+            "       ROUND(SUM(CAST(prod_quantity*prod_price AS numeric)),2) AS cost,\n" +
+            "       SUM(prod_quantity) AS overallProductsNum,\n" +
+            "       ROUND(AVG(CAST(prod_price AS numeric)),2) AS avgProductPrice,\n" +
+            "       date_created AS dateDone,\n" +
+            "       status AS orderStatus\n" +
+            "FROM (product_in_order INNER JOIN product ON product_articul = articul)\n" +
+            "    INNER JOIN order_t ON id = order_id\n" +
+            "    WHERE date_created BETWEEN :dateStart AND :dateEnd\n" +
+//            "WHERE date_created BETWEEN :dateStart AND :dateEnd\n" +
+            "GROUP BY id\n" +
+            "ORDER BY id", nativeQuery = true)
+    Iterable<OrderReportValues> getOrderReportValues(@Param("dateStart") LocalDate dateStart, @Param("dateEnd") LocalDate dateEnd);
+
+
+    @Query(value =
+            "SELECT ROUND(COALESCE(SUM(CAST(prod_price*prod_quantity AS numeric)),0),2) AS income\n" +
+            "FROM order_t INNER JOIN product_in_order ON id = order_id\n" +
+            "WHERE status = 'DONE' AND date_created BETWEEN :dateStart AND :dateEnd", nativeQuery = true)
+    double getFullIncome(@Param("dateStart") LocalDate dateStart, @Param("dateEnd") LocalDate dateEnd);
+
+
+    @Query(value =
+            "SELECT COUNT(DISTINCT id) AS orderNum\n" +
+            "FROM order_t INNER JOIN product_in_order ON id = order_id\n" +
+            "WHERE date_created BETWEEN :dateStart AND :dateEnd", nativeQuery = true)
+    int getOrdersNum(@Param("dateStart") LocalDate dateStart, @Param("dateEnd") LocalDate dateEnd);
+
+
+    @Query(value =
+            "SELECT ROUND(COALESCE(AVG(CAST(orderCost AS numeric)),0),2) AS avgOrderCost\n" +
+            "FROM (\n" +
+            "         SELECT SUM(prod_quantity*prod_price) AS orderCost\n" +
+            "         FROM order_t INNER JOIN product_in_order ON id = order_id\n" +
+            "         WHERE date_created BETWEEN :dateStart AND :dateEnd\n" +
+            "         GROUP BY id\n" +
+            "     ) T", nativeQuery = true)
+    int getAvgOrderCost(@Param("dateStart") LocalDate dateStart, @Param("dateEnd") LocalDate dateEnd);
+
+
+    @Query(value =
+            "SELECT status, COUNT(*) AS orderNum, ROUND(COALESCE(SUM(CAST(orderCost AS numeric)),0),2) AS orderGroupCost, ROUND(COALESCE(AVG(CAST(orderCost AS numeric)),0),2) AS avgOrderCost\n" +
+            "FROM (\n" +
+            "         SELECT status, SUM(prod_quantity*prod_price) AS orderCost\n" +
+            "         FROM order_t INNER JOIN product_in_order ON id = order_id\n" +
+            "         WHERE date_created BETWEEN :dateStart AND :dateEnd\n" +
+            "         GROUP BY id, status\n" +
+            "     ) T\n" +
+            "GROUP BY status\n" +
+            "ORDER BY status", nativeQuery = true)
+    Iterable<OrderGroupReportValues> getOrderGroupReportValues(@Param("dateStart") LocalDate dateStart, @Param("dateEnd") LocalDate dateEnd);
+
+
+    @Query(value =
+            "SELECT COALESCE(MIN(date_created),'1970-01-01 00:00:00.000000')\n" +
+            "FROM order_t INNER JOIN product_in_order ON id = order_id", nativeQuery = true)
+    Date getMinDate();
+
+    @Query(value =
+            "SELECT COALESCE(MAX(date_created),'1970-01-01 00:00:00.000000')\n" +
+                    "FROM order_t INNER JOIN product_in_order ON id = order_id", nativeQuery = true)
+    Date getMaxDate();
+
+
+
 }
+
+
+
+
+
+
+
