@@ -25,11 +25,11 @@ public class SalesmanGetDto {
     @NotNull
     private Contacts contacts;
 
-    @JsonProperty("date_of_birth")
+    @JsonProperty("dateOfBirth")
     @NotNull
     private Date dateOfBirth;
 
-    @JsonProperty("date_of_hiring")
+    @JsonProperty("dateOfHiring")
     @NotNull
     private Date dateOfHiring;
 
