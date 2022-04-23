@@ -3,22 +3,43 @@ package com.databases.shop.repositories;
 import com.databases.shop.models.Category;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    @Query("SELECT c " +
-            "FROM Category c " +
-            "WHERE LOWER(c.name) LIKE LOWER(:name)")
-    Iterable<Category> findByName(@Param("name") String name);
+    @Query(value =
+            "SELECT *\n" +
+            "FROM category\n" +
+            "WHERE LOWER(name) LIKE LOWER(:name)", nativeQuery = true)
+    Iterable<Category> findByName(String name);
 
-    @Query("SELECT c " +
-            "FROM Category c " +
-            "WHERE LOWER(c.name) LIKE LOWER(:name) AND NOT c.id = :id")
-    Iterable<Category> findByNameAndNotId(@Param("id") long id, @Param("name") String name);
+    @Query(value =
+            "SELECT *\n" +
+            "FROM category\n" +
+            "WHERE LOWER(name) LIKE LOWER(:name) AND NOT id = :id", nativeQuery = true)
+    Iterable<Category> findByNameAndNotId(long id, String name);
+
+    @Transactional
+    @Modifying
+    @Query(value =
+            "DELETE FROM category\n" +
+            "WHERE id = :id", nativeQuery = true)
+    void deleteCById(long id);
+
+    @Transactional
+    @Modifying
+    @Query(value =
+            "UPDATE category\n" +
+            "SET name = :name,\n" +
+                "description = :description\n" +
+            "WHERE id = :id", nativeQuery = true)
+    void update(Long id, String name, String description);
 
     @Query(value =
             "SELECT COALESCE(MIN(COALESCE(products_quantity,0)),0) AS minValue, COALESCE(MAX(COALESCE(products_quantity,0)),0) AS maxValue\n" +

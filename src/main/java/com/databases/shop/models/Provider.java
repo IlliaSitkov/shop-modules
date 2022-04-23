@@ -36,8 +36,8 @@ public class Provider {
     @Embedded
     private Contacts contacts;
 
-    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "provider")
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Set<Product> products;
 
     public Provider(String name, Address address, Contacts contacts) {

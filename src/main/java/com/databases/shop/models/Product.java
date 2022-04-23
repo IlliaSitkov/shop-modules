@@ -48,8 +48,8 @@ public class Product {
     @JoinColumn(name = "category_fk", nullable = false)
     private Category category;
 
-    @OneToMany(mappedBy = "product")//, cascade = CascadeType.ALL)
-    //@OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "product")
+    //@OnDelete(action = OnDeleteAction.NO_ACTION)
     private Set<ProductInOrder> productsInOrder = new HashSet<>();
 
     public Product(String name, String description, int quantity, double price, Provider provider, Category category) {

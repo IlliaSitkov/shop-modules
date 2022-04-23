@@ -8,6 +8,7 @@ import lombok.Setter;
 import com.databases.shop.mapstruct.dtos.contacts.ContactsPutDto;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -20,5 +21,13 @@ public class SalesmanPutDto {
     @JsonProperty("contacts")
     @NotNull
     private ContactsPutDto contacts;
+
+    @JsonProperty("date_of_birth")
+    @NotNull
+    private Date dateOfBirth;
+
+    @JsonProperty("date_of_hiring")
+    @NotNull
+    private Date dateOfHiring;
 
 }

@@ -2,6 +2,7 @@ package com.databases.shop.services.implementations;
 
 import com.databases.shop.exceptions.category.CategoryIllegalArgumentException;
 import com.databases.shop.exceptions.category.NoCategoryWithSuchId;
+import com.databases.shop.exceptions.category.UnableToDeleteCategoryException;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.CategoryFilterBoundsDto;
 import com.databases.shop.models.Category;
 import com.databases.shop.repositories.CategoryRepository;
@@ -11,6 +12,7 @@ import com.databases.shop.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -45,7 +47,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public boolean deleteCategory(Long id) {
         if(!categoryExistsById(id)) throw new NoCategoryWithSuchId(id);
-        categoryRepository.deleteById(id);
+        try {
+            categoryRepository.deleteCById(id);
+        }
+        catch (Exception e) {
+            throw new UnableToDeleteCategoryException();
+        }
         return true;
     }
 
@@ -65,7 +72,9 @@ public class CategoryServiceImpl implements CategoryService {
             category.setName(finalName);
             category.setDescription(description);
 
-            return categoryRepository.save(category);
+            // return categoryRepository.save(category);
+            categoryRepository.update(id, finalName, description);
+            return category;
         }).orElseGet(() -> {
             return categoryRepository.save(new Category(id, finalName, description));
         });

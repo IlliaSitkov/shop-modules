@@ -93,10 +93,15 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
     @Query(value =
             "SELECT * " +
-            "FROM order_t " +
-            "WHERE customer_id = :customerId",nativeQuery = true)
+                    "FROM order_t " +
+                    "WHERE customer_id = :customerId",nativeQuery = true)
     Iterable<Order> findByCustomerId(@Param("customerId") Long customerId);
 
+    @Query(value =
+            "SELECT * " +
+            "FROM order_t " +
+            "WHERE salesman_id = :salesmanId",nativeQuery = true)
+    Iterable<Order> findBySalesmanId(@Param("salesmanId") Long salesmanId);
 
     @Query(value =
             "SELECT id AS orderId,\n" +

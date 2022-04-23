@@ -3,11 +3,14 @@ package com.databases.shop.utils;
 import com.databases.shop.exceptions.salesman.IncorrectPhoneNumberFormatException;
 import com.databases.shop.exceptions.strings.InvalidAddressException;
 import com.databases.shop.exceptions.strings.InvalidContactsException;
+import com.databases.shop.exceptions.strings.InvalidDatesException;
 import com.databases.shop.exceptions.strings.InvalidNameException;
 import com.databases.shop.exceptions.product.ProductIllegalArgumentException;
 import com.databases.shop.models.*;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,11 +21,11 @@ import java.util.stream.Collectors;
 public class Utils {
 
     public String processString(String str) {
-        return str.replaceAll("\\s+", " ").trim();
+        return str == null ? null : str.replaceAll("\\s+", " ").trim();
     }
 
     public boolean isInvalidName(String name) {
-        return name.isEmpty();
+        return name == null || name.isEmpty();
     }
 
     public void checkName(String name) {
@@ -32,8 +35,7 @@ public class Utils {
     }
 
     public PersonName processPersonName(PersonName personName) {
-        String lastname = personName.getLastname() == null ? null : processString(personName.getLastname());
-        return new PersonName(processString(personName.getName()),lastname,processString(personName.getSurname()));
+        return new PersonName(processString(personName.getName()),processString(personName.getLastname()),processString(personName.getSurname()));
     }
 
     public void checkPersonName(PersonName personName) {
@@ -44,17 +46,17 @@ public class Utils {
         }
     }
 
-
-
     public Address processAddress(Address address) {
         return new Address(processString(address.getCountry()), processString(address.getRegion()),
                 processString(address.getCity()), processString(address.getStreet()),
                 processString(address.getApartment()));
     }
 
-    //TODO: is region necessary?
     public boolean isInvalidAddress(Address address) {
-        return address.getCountry().isEmpty() || address.getRegion().isEmpty()
+        return address.getCountry() == null || address.getRegion() == null
+                || address.getCity() == null || address.getStreet() == null
+                || address.getApartment() == null ||
+                address.getCountry().isEmpty() || address.getRegion().isEmpty()
                 || address.getCity().isEmpty() || address.getStreet().isEmpty()
                 || address.getApartment().isEmpty();
     }
@@ -70,14 +72,15 @@ public class Utils {
     }
 
     public boolean isInvalidContacts(Contacts contacts) {
-        return contacts.getPhoneNumber().isEmpty() || contacts.getEmail().isEmpty()
+        return contacts.getPhoneNumber() == null || contacts.getEmail() == null ||
+                contacts.getPhoneNumber().isEmpty() || contacts.getEmail().isEmpty()
                 || !isValidPhoneNumber(contacts.getPhoneNumber())
                 || !contacts.getEmail().matches("[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}");
     }
 
     public boolean isValidPhoneNumber(String phone) {
-//        return phone.matches("[(]?\\d+[)]?[-\\s]?\\d+[-\\s]?\\d+([-\\s]\\d+)?");
-        return true;
+        return phone.matches("[(]?\\d+[)]?[-\\s]?\\d+[-\\s]?\\d+([-\\s]\\d+)?");
+        //return true;
     }
 
     public void checkPhoneNumber(String phone) {
@@ -89,6 +92,15 @@ public class Utils {
 
     public void checkContacts(Contacts contacts) {
         if (isInvalidContacts(contacts)) {
+            throw new InvalidContactsException(Values.INVALID_CONTACTS);
+        }
+    }
+
+    public void checkContactsProvider(Contacts contacts) {
+        if (contacts.getPhoneNumber() != null && (contacts.getPhoneNumber().isEmpty() || !isValidPhoneNumber(contacts.getPhoneNumber()))) {
+            throw new InvalidContactsException(Values.INVALID_CONTACTS);
+        }
+        if (contacts.getEmail() != null && (contacts.getEmail().isEmpty() || !contacts.getEmail().matches("[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}"))) {
             throw new InvalidContactsException(Values.INVALID_CONTACTS);
         }
     }
@@ -131,5 +143,32 @@ public class Utils {
         calendar.set(Calendar.MILLISECOND,0);
 
         return calendar.getTime();
+    }
+
+    private boolean isInvalidDateOfBirth(Date dateOfBirth, LocalDate currentDateL) {
+        LocalDate dateOfBirthL = convertToLocalDateViaInstant(dateOfBirth);
+        return (dateOfBirthL.isAfter(currentDateL.minusYears(17)) || (dateOfBirthL.isBefore(currentDateL.minusYears(120))));
+    }
+
+    private boolean isInvalidDateOfHiring(Date dateOfHiring, LocalDate currentDateL) {
+        LocalDate dateOfHiringL = convertToLocalDateViaInstant(dateOfHiring);
+        return dateOfHiringL.isBefore(currentDateL.minusYears(100));
+    }
+
+    public void checkDates(Date dateOfBirth, Date dateOfHiring) {
+        LocalDate currentDate = convertToLocalDateViaInstant(getCurrentDate());
+        if (isInvalidDateOfBirth(dateOfBirth, currentDate) || isInvalidDateOfHiring(dateOfHiring, currentDate)) {
+            throw new InvalidDatesException(Values.INVALID_DATE);
+        }
+    }
+
+    public Date convertToDateViaSqlTimestamp(LocalDate dateToConvert) {
+        return java.sql.Timestamp.valueOf(dateToConvert.atStartOfDay());
+    }
+
+    public LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
     }
 }

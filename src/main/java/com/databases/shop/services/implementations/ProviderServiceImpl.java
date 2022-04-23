@@ -1,7 +1,9 @@
 package com.databases.shop.services.implementations;
 
+import com.databases.shop.exceptions.category.UnableToDeleteCategoryException;
 import com.databases.shop.exceptions.provider.NoProviderWithSuchEdrpou;
 import com.databases.shop.exceptions.provider.ProviderIllegalArgumentException;
+import com.databases.shop.exceptions.provider.UnableToDeleteProviderException;
 import com.databases.shop.models.Address;
 import com.databases.shop.models.Contacts;
 import com.databases.shop.models.Provider;
@@ -33,7 +35,7 @@ public class ProviderServiceImpl implements ProviderService {
         address = utils.processAddress(address);
         utils.checkAddress(address);
         contacts = utils.processContacts(contacts);
-        utils.checkContacts(contacts);
+        utils.checkContactsProvider(contacts);
 
         return providerRepository.save(new Provider(name, address, contacts));
     }
@@ -52,7 +54,12 @@ public class ProviderServiceImpl implements ProviderService {
     @Override
     public boolean deleteProvider(Long edrpou) {
         if(!providerExistsByEdrpou(edrpou)) throw new NoProviderWithSuchEdrpou(edrpou);
-        providerRepository.deleteById(edrpou);
+        try {
+            providerRepository.deletePByEdrpou(edrpou);
+        }
+        catch (Exception e) {
+            throw new UnableToDeleteProviderException();
+        }
         return true;
     }
 
@@ -68,8 +75,10 @@ public class ProviderServiceImpl implements ProviderService {
         Address finalAddress = utils.processAddress(address);
         utils.checkAddress(finalAddress);
         Contacts finalContacts = utils.processContacts(contacts);
-        utils.checkContacts(finalContacts);
+        utils.checkContactsProvider(finalContacts);
         return providerRepository.findById(edrpou).map((provider) -> {
+            if (provider.getContacts() == null)
+                provider.setContacts(new Contacts(null, null));
             if (nothingChanged(provider, finalName, finalAddress, finalContacts))
                 return provider;
 
@@ -77,13 +86,16 @@ public class ProviderServiceImpl implements ProviderService {
             provider.setAddress(finalAddress);
             provider.setContacts(finalContacts);
 
-            return providerRepository.save(provider);
+            // return providerRepository.save(provider);
+            providerRepository.update(edrpou, finalName, finalAddress.getCountry(), finalAddress.getRegion(), finalAddress.getCity(), finalAddress.getStreet(), finalAddress.getApartment(), finalContacts.getPhoneNumber(), finalContacts.getEmail());
+            return provider;
         }).orElseGet(() -> {
             return providerRepository.save(new Provider(edrpou, finalName, finalAddress, finalContacts));
         });
     }
 
     private boolean nothingChanged(Provider provider, String name, Address address, Contacts contacts) {
+        System.out.println(provider.getContacts());
         return provider.getName().equals(name) && provider.getAddress().equals(address) &&
                 provider.getContacts().equals(contacts);
     }
@@ -127,7 +139,7 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public Iterable<Provider> findName(String name) {
-        return providerRepository.findName(name);
+        return providerRepository.findByName(name);
     }
 
 }

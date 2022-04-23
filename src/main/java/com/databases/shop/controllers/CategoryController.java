@@ -2,6 +2,7 @@ package com.databases.shop.controllers;
 
 import com.databases.shop.exceptions.category.CategoryIllegalArgumentException;
 import com.databases.shop.exceptions.category.NoCategoryWithSuchId;
+import com.databases.shop.exceptions.category.UnableToDeleteCategoryException;
 import com.databases.shop.mapstruct.dtos.category.CategoryGetDto;
 import com.databases.shop.mapstruct.dtos.category.CategoryPostDto;
 import com.databases.shop.mapstruct.dtos.category.CategoryPutDto;
@@ -86,6 +87,7 @@ public class CategoryController {
     }
 
     @ExceptionHandler(NoCategoryWithSuchId.class)
+    @ResponseStatus(code = HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String,String>> handleException(NoCategoryWithSuchId ex){
         Map<String, String> result = new HashMap<>();
         result.put("found", "false");

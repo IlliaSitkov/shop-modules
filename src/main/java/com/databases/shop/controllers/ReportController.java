@@ -23,18 +23,21 @@ public class ReportController {
 
 
     @GetMapping("/orders/generate")
-    public void generateReport(@RequestParam(value = "dateStart", required = false) String dateStart, @RequestParam(value = "dateEnd",required = false) String dateEnd) {
+    public void generateOrdersReport(@RequestParam(value = "dateStart", required = false) String dateStart, @RequestParam(value = "dateEnd",required = false) String dateEnd) {
         System.out.println(dateStart);
         System.out.println(dateEnd);
         reportService.generateOrdersReport(dateStart,dateEnd);
     }
 
-    @GetMapping(value = "/orders", produces = MediaType.APPLICATION_PDF_VALUE)
-    @ResponseBody
-    public byte[] getReport() {
+    @GetMapping("/products/generate")
+    public void generateProductsReport(@RequestParam(value = "dateStart", required = false) String dateStart, @RequestParam(value = "dateEnd",required = false) String dateEnd) {
+        reportService.generateProductsReport(dateStart,dateEnd);
+    }
+
+    private byte[] getReport(String fileName) {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(new File("src/main/resources/static/ordersReport.pdf")));
+            BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(new File(fileName)));
             int read = 0;
             byte[] buff = new byte[1024];
             while ((read = inputStream.read(buff)) != -1) {
@@ -47,8 +50,17 @@ public class ReportController {
         return null;
     }
 
+    @GetMapping(value = "/orders", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public byte[] getOrdersReport() {
+        return getReport("src/main/resources/static/ordersReport.pdf");
+    }
 
-
+    @GetMapping(value = "/products", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public byte[] getProductsReport() {
+        return getReport("src/main/resources/static/productsReport.pdf");
+    }
 
 
 

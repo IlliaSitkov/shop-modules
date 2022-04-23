@@ -1,28 +1,53 @@
 package com.databases.shop.repositories;
 
 import com.databases.shop.models.Product;
+import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import com.databases.shop.repositories.queryinterfaces.ProductReportValues;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("SELECT p " +
-           "FROM Product p " +
-           "WHERE LOWER(p.name) LIKE LOWER( :name)")
-    Iterable<Product> findByName(@Param("name") String name);
+    @Query(value =
+            "SELECT *\n" +
+            "FROM product\n" +
+            "WHERE LOWER(name) LIKE LOWER(:name)", nativeQuery = true)
+    Iterable<Product> findByName(String name);
 
-    @Query("SELECT p " +
-           "FROM Product p " +
-           "WHERE LOWER(p.name) LIKE LOWER( :name) AND NOT p.articul = :articul")
-    Iterable<Product> findByNameAndNotArticul(@Param("articul") long articul, @Param("name") String name);
+    @Query(value =
+           "SELECT *\n" +
+           "FROM product\n" +
+           "WHERE LOWER(name) LIKE LOWER(:name) AND NOT articul = :articul", nativeQuery = true)
+    Iterable<Product> findByNameAndNotArticul(long articul, String name);
+
+    @Transactional
+    @Modifying
+    @Query(value =
+            "DELETE FROM product\n" +
+            "WHERE articul = :articul", nativeQuery = true)
+    void deletePByArticul(long articul);
+
+    @Transactional
+    @Modifying
+    @Query(value =
+            "UPDATE product\n" +
+            "SET name = :name,\n" +
+            "description = :description,\n" +
+            "quantity = :quantity,\n" +
+            "price = :price,\n" +
+            "provider_fk = :providerEdrpou,\n" +
+            "category_fk = :categoryId\n" +
+            "WHERE articul = :articul", nativeQuery = true)
+    void update(Long articul, String name, String description, int quantity, double price, long providerEdrpou, long categoryId);
 
     @Query(value =
             "SELECT *\n" +
@@ -82,7 +107,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                    "FROM product p LEFT OUTER JOIN\n" +
                          "(product_in_order JOIN order_t ON id = order_id) ON articul = product_articul\n" +
                    "WHERE (status = 'DONE' OR status IS NULL)\n" +
-                   "AND (date_created >= :dateStart AND date_created <= :dateEnd) OR date_created IS NULL\n" +
+                   "AND (date_created BETWEEN :dateStart AND :dateEnd) OR date_created IS NULL\n" +
                    "GROUP BY articul", nativeQuery = true)
     Iterable<ProductReportValues> productReport(LocalDate dateStart, LocalDate dateEnd);
+
+    @Query(value = "SELECT COALESCE(SUM(prod_quantity),0) AS soldQuantity\n" +
+                   "FROM product p JOIN\n" +
+                        "(product_in_order JOIN order_t ON id = order_id) ON articul = product_articul\n" +
+                   "WHERE status = 'DONE' AND (date_created BETWEEN :dateStart AND :dateEnd)\n", nativeQuery = true)
+    int getSoldProductsQuant(LocalDate dateStart, LocalDate dateEnd);
 }

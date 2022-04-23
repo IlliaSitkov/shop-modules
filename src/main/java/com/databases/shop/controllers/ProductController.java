@@ -45,7 +45,6 @@ public class ProductController {
     @GetMapping
     //@PreAuthorize("hasRole('ADMIN') or hasRole('SALESMAN') or hasRole('CUSTOMER')")
     public Iterable<ProductGetDto> getProducts(){
-        productService.createReport();
         return productMapper.productsToProductsGetDto(productService.getAll());
     }
 
@@ -70,7 +69,6 @@ public class ProductController {
     @PostMapping
     //@PreAuthorize("hasRole('ADMIN')")
     public ProductGetDto addProduct(@Valid @RequestBody ProductPostDto productPostDto){
-        productService.createReport();
         return productMapper.productToProductGetDto(productService.addProduct(productMapper.productPostDtoToProduct(productPostDto)));
     }
 

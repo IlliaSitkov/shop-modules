@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+//@EqualsAndHashCode
 public class Contacts {
 
     @NotBlank
@@ -30,5 +30,22 @@ public class Contacts {
     public Contacts(String phoneNumber, String email) {
         this.phoneNumber = phoneNumber;
         this.email = email;
+    }
+
+    private boolean stringsAreEqual(String str1, String str2) {
+        if (str1 == null)
+            return str2 == null;
+        if (str2 == null)
+            return false;
+        return str1.equals(str2);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Contacts)) return false;
+        Contacts contacts = (Contacts) o;
+        return stringsAreEqual(getPhoneNumber(), contacts.getPhoneNumber()) &&
+                stringsAreEqual(getEmail(), contacts.getEmail());
     }
 }

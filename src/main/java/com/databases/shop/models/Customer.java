@@ -2,6 +2,8 @@ package com.databases.shop.models;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -27,6 +29,7 @@ public class Customer {
     private Address address;
 
     @OneToMany(mappedBy = "customer")
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Set<Order> orders = new HashSet<>();
 
     @NotNull

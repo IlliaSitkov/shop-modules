@@ -1,24 +1,52 @@
 package com.databases.shop.repositories;
 
+import com.databases.shop.models.Category;
 import com.databases.shop.models.Provider;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
 @Repository
 public interface ProviderRepository extends JpaRepository<Provider, Long> {
 
-    @Query("SELECT p " +
-            "FROM Provider p " +
-            "WHERE LOWER(p.name) LIKE LOWER( :name)")
-    Iterable<Provider> findByName(@Param("name") String name);
+    @Query(value =
+            "SELECT *\n" +
+            "FROM provider\n" +
+            "WHERE LOWER(name) LIKE LOWER(:name)", nativeQuery = true)
+    Iterable<Provider> findByName(String name);
 
-    @Query("SELECT p " +
-            "FROM Provider p " +
-            "WHERE LOWER(p.name) LIKE LOWER( :name) AND NOT p.edrpou = :edrpou")
-    Iterable<Provider> findByNameAndNotEdrpou(@Param("edrpou") long edrpou, @Param("name") String name);
+    @Query(value =
+            "SELECT *\n" +
+            "FROM provider\n" +
+            "WHERE LOWER(name) LIKE LOWER(:name) AND NOT edrpou = :edrpou", nativeQuery = true)
+    Iterable<Provider> findByNameAndNotEdrpou(long edrpou, String name);
+
+    @Transactional
+    @Modifying
+    @Query(value =
+            "DELETE FROM provider\n" +
+            "WHERE edrpou = :edrpou", nativeQuery = true)
+    void deletePByEdrpou(long edrpou);
+
+    @Transactional
+    @Modifying
+    @Query(value =
+            "UPDATE provider\n" +
+            "SET name = :name,\n" +
+            "addr_country = :country,\n" +
+            "addr_region = :region,\n" +
+            "addr_city = :city,\n" +
+            "addr_street = :street,\n" +
+            "addr_apartment = :apartment,\n" +
+            "contacts_phone_number = :phoneNumber,\n" +
+            "contacts_email = :email\n" +
+            "WHERE edrpou = :edrpou", nativeQuery = true)
+    void update(Long edrpou, String name, String country, String region, String city, String street, String apartment, String phoneNumber, String email);
 
     @Query(value =
             "SELECT *\n" +
@@ -34,12 +62,6 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
                                     "FROM product\n" +
                                     "WHERE provider_fk = edrpou)))", nativeQuery = true)
     Iterable<Provider> findHavingQuantityOfProductsSoldBigger(@Param("quantity") int quantity);
-
-    @Query(value =
-            "SELECT *\n" +
-                    "FROM provider\n" +
-                    "WHERE name = :name ", nativeQuery = true)
-    Iterable<Provider> findName(@Param("name") String name);
 
     @Query(value =
             "SELECT COALESCE(MIN(COALESCE(products_quantity,0)),0) AS minValue, COALESCE(MAX(COALESCE(products_quantity,0)),0) AS maxValue\n" +

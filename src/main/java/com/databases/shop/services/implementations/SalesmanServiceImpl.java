@@ -7,8 +7,11 @@ import com.databases.shop.mapstruct.dtos.salesman.SalesmanGetDto;
 import com.databases.shop.mapstruct.dtos.salesman.SalesmanPostDto;
 import com.databases.shop.mapstruct.dtos.user.UserGetDto;
 import com.databases.shop.mapstruct.mappers.SalesmanMapper;
+import com.databases.shop.models.Order;
+import com.databases.shop.models.OrderStatus;
 import com.databases.shop.models.Salesman;
 import com.databases.shop.repositories.CustomerRepository;
+import com.databases.shop.repositories.OrderRepository;
 import com.databases.shop.repositories.SalesmanFilterRepository;
 import com.databases.shop.repositories.SalesmanRepository;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
@@ -29,7 +32,7 @@ public class SalesmanServiceImpl implements SalesmanService {
     private SalesmanFilterRepository salesmanFilterRepository;
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
     private Utils utils;
@@ -55,7 +58,7 @@ public class SalesmanServiceImpl implements SalesmanService {
         utils.processSalesman(salesman);
         utils.checkPersonName(salesman.getPersonName());
         utils.checkContacts(salesman.getContacts());
-
+        utils.checkDates(salesman.getDateOfBirth(), salesman.getDateOfHiring());
         return salesmanRepository.save(salesman);
     }
 
@@ -114,10 +117,13 @@ public class SalesmanServiceImpl implements SalesmanService {
         salesman.setPersonName(utils.processPersonName(salesman.getPersonName()));
         utils.checkPersonName(salesman.getPersonName());
         utils.checkPhoneNumber(salesman.getContacts().getPhoneNumber());
+        utils.checkDates(salesman.getDateOfBirth(), salesman.getDateOfHiring());
 
         Salesman s = salesmanRepository.findById(id).orElseThrow(() -> new NoSalesmanWithSuchIdException(id));
         s.setPersonName(salesman.getPersonName());
         s.getContacts().setPhoneNumber(salesman.getContacts().getPhoneNumber());
+        s.setDateOfBirth(salesman.getDateOfBirth());
+        s.setDateOfHiring(salesman.getDateOfHiring());
         return salesmanRepository.save(s);
     }
 
@@ -135,6 +141,10 @@ public class SalesmanServiceImpl implements SalesmanService {
     @Override
     public boolean delete(Long id) {
         if (salesmanRepository.existsById(id)) {
+            for (Order order: orderRepository.findBySalesmanId(id)){
+                order.setSalesman(null);
+                orderRepository.save(order);
+            }
             Salesman s = salesmanRepository.getById(id);
             try {
                 adminService.deleteUserAccountByEmail(s.getContacts().getEmail());

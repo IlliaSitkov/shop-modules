@@ -30,8 +30,8 @@ public class Category {
     @Column(nullable = false)
     private String description;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(mappedBy = "category")
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Set<Product> products;
 
     public Category(String name, String description) {

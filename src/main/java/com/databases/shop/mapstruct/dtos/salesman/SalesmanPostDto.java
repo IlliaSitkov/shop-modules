@@ -10,6 +10,7 @@ import lombok.ToString;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -23,6 +24,14 @@ public class SalesmanPostDto {
     @JsonProperty("contacts")
     @NotNull
     private Contacts contacts;
+
+    @JsonProperty("date_of_birth")
+    @NotNull
+    private Date dateOfBirth;
+
+    @JsonProperty("date_of_hiring")
+    @NotNull
+    private Date dateOfHiring;
 
     @JsonProperty("password")
     @NotNull

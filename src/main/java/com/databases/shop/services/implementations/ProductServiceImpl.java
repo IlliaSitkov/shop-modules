@@ -1,7 +1,9 @@
 package com.databases.shop.services.implementations;
 
+import com.databases.shop.exceptions.category.UnableToDeleteCategoryException;
 import com.databases.shop.exceptions.product.NoProductWithSuchArticul;
 import com.databases.shop.exceptions.product.ProductIllegalArgumentException;
+import com.databases.shop.exceptions.product.UnableToDeleteProductException;
 import com.databases.shop.mapstruct.dtos.filterBoundsDtos.ProductFilterBoundsDto;
 import com.databases.shop.models.Category;
 import com.databases.shop.models.Product;
@@ -43,7 +45,6 @@ public class ProductServiceImpl implements ProductService {
         Iterable<Product> productsWithSuchName = productRepository.findByName(name);
         if (productsWithSuchName.iterator().hasNext())
             throw new ProductIllegalArgumentException("Product with such name already exists!");
-        //TODO: Do we need to write save, update, delete, getAll methods by ourselves?
         return productRepository.save(new Product(name, description, quantity, price, provider, category));
     }
 
@@ -61,7 +62,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public boolean deleteProduct(Long articul) {
         if(!productExistsByArticul(articul)) throw new NoProductWithSuchArticul(articul);
-        productRepository.deleteById(articul);
+        try {
+            productRepository.deletePByArticul(articul);
+        }
+        catch (Exception e) {
+            throw new UnableToDeleteProductException();
+        }
         return true;
     }
 
@@ -87,7 +93,9 @@ public class ProductServiceImpl implements ProductService {
             product.setPrice(price);
             product.setProvider(provider);
             product.setCategory(category);
-            return productRepository.save(product);
+            //return productRepository.save(product);
+            productRepository.update(articul, finalName, description, quantity, price, provider.getEdrpou(), category.getId());
+            return product;
         }).orElseGet(() -> {
             return productRepository.save(new Product(articul, finalName, description,
                     quantity, price, provider, category));
@@ -150,54 +158,4 @@ public class ProductServiceImpl implements ProductService {
         return productFilterBoundsDto;
     }
 
-    private void addTableHeader(PdfPTable table, Font font) {
-        Stream.of("Артикул", "Назва", "Продана к-ть", "Виручка", "Середня к-ть в замовленні", "К-ть покупців")
-                .forEach(columnTitle -> {
-                    PdfPCell header = new PdfPCell();
-                    header.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                    header.setBorderWidth(2);
-                    header.setPhrase(new Phrase(columnTitle, font));
-                    table.addCell(header);
-                });
-    }
-
-    private void addRows(PdfPTable table, Iterable<ProductReportValues> productReportValues, Font font) {
-        for (ProductReportValues prRV: productReportValues) {
-            table.addCell(new Phrase(prRV.getArticul() + "", font));
-            table.addCell(new Phrase(prRV.getName(), font));
-            table.addCell(new Phrase(prRV.getSoldQuantity() + "", font));
-            table.addCell(new Phrase(prRV.getSoldCost() + "", font));
-            table.addCell(new Phrase(prRV.getAverageQuantityInOrder() + "", font));
-            table.addCell(new Phrase(prRV.getQuantityOfCustomers() + "", font));
-        }
-    }
-
-    @Override
-    public void createReport() {
-        LocalDate startDate = LocalDate.parse("1970-03-02");
-        LocalDate endDate = LocalDate.parse("2022-04-04");
-        Iterable<ProductReportValues> productReportValues = productRepository.productReport(startDate, endDate);
-        try {
-            Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream("productReport.pdf"));
-            document.open();
-            BaseFont baseFont = BaseFont.createFont("/System/Library/Fonts/SFNSRounded.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-            Font font = new Font(baseFont, 16);
-            Paragraph p = new Paragraph("Звіт по продуктах за період " + startDate + " - " + endDate + "\n", font);
-            p.setAlignment(Element.ALIGN_CENTER);
-            p.setSpacingAfter(40f);
-            document.add(p);
-
-            PdfPTable table = new PdfPTable(6);
-            addTableHeader(table, font);
-            addRows(table, productReportValues, font);
-            document.add(table);
-            document.close();
-        }
-        catch (FileNotFoundException | DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
