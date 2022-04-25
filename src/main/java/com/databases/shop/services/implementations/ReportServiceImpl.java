@@ -128,9 +128,6 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void generateProductsReport(String dateStart, String dateEnd) {
         try {
-            //month/day/year
-            Date d = new Date("11/08/2022");
-            System.out.println(d);
             LocalDate startDate = dateStart == null || dateStart.isEmpty() ? utils.convertToLocalDateViaInstant(orderRepository.getMinDate()) : LocalDate.parse(dateStart);
             LocalDate endDate = dateEnd == null || dateEnd.isEmpty() ? utils.convertToLocalDateViaInstant(orderRepository.getMaxDate()): LocalDate.parse(dateEnd);
 

@@ -29,11 +29,11 @@ public class Salesman {
     @Embedded
     private Contacts contacts;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "date_of_birth", nullable = false)
     private Date dateOfBirth;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "date_of_hiring", nullable = false)
     private Date dateOfHiring;
 
