@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @ToString
 @Setter
@@ -32,5 +33,12 @@ public class UserGetDto {
     @Nullable
     private Address address;
 
+    @JsonProperty("dateOfBirth")
+    @Nullable
+    private Date dateOfBirth;
+
+    @JsonProperty("dateOfHiring")
+    @Nullable
+    private Date dateOfHiring;
 
 }
