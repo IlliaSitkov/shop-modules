@@ -96,14 +96,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(() -> new NoCategoryWithSuchId(id));
+        return categoryRepository.getCById(id).orElseThrow(() -> new NoCategoryWithSuchId(id));
     }
 
     @Override
     public Iterable<Category> getAll() {
-        List<Category> categories = categoryRepository.findAll();
-        //Collections.sort(categories);
-        return categories;
+        return categoryRepository.getAll();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.databases.shop.repositories;
 
 import com.databases.shop.models.Category;
+import com.databases.shop.models.Product;
 import com.databases.shop.repositories.queryinterfaces.MinMaxValues;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,9 +10,22 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+
+    @Query(value =
+            "SELECT *\n" +
+            "FROM category\n" +
+            "ORDER BY name", nativeQuery = true)
+    Iterable<Category> getAll();
+
+    @Query(value =
+            "SELECT *\n" +
+            "FROM category\n" +
+            "WHERE id = :id", nativeQuery = true)
+    Optional<Category> getCById(long id);
 
     @Query(value =
             "SELECT *\n" +
@@ -73,7 +87,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                                         "WHERE product_articul IN(\n" +
                                             "SELECT articul\n" +
                                             "FROM product\n" +
-                                            "WHERE category_fk = category.id)))", nativeQuery = true)
+                                            "WHERE category_fk = category.id)))\n" +
+            "ORDER BY name", nativeQuery = true)
     Iterable<Category> findHavingQuantityOfCustomersBiggerAndQuantityOfProductsSoldBigger(int customersQuant, int productsQuant);
 
     @Query(value =
@@ -107,6 +122,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                     "    FROM product INNER JOIN product_in_order pio ON product.articul = pio.product_articul\n" +
                     "         INNER JOIN order_t ON order_t.id = pio.order_id\n" +
                     "    WHERE status = 'DONE'\n" +
-                    "    GROUP BY category_fk) AS ProductsQuantities ON category.id = category_fk)", nativeQuery = true)
+                    "    GROUP BY category_fk) AS ProductsQuantities ON category.id = category_fk)\n" +
+            "ORDER BY name", nativeQuery = true)
     Iterable<Category> findHavingQuantityOfCustomersBiggerAndQuantityOfProductsSoldBiggerWithMaxProductsQuantity(int customersQuant, int productsQuant);
 }

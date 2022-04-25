@@ -122,14 +122,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductByArticul(Long articul) {
-        return productRepository.findById(articul).orElseThrow(() -> new NoProductWithSuchArticul(articul));
+        return productRepository.getPByArticul(articul).orElseThrow(() -> new NoProductWithSuchArticul(articul));
     }
 
     @Override
     public Iterable<Product> getAll() {
-        List<Product> products = productRepository.findAll();
-        //Collections.sort(products);
-        return products;
+        return productRepository.getAll();
     }
 
     @Override

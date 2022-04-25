@@ -13,9 +13,22 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    @Query(value =
+            "SELECT *\n" +
+            "FROM product\n" +
+            "ORDER BY name", nativeQuery = true)
+    Iterable<Product> getAll();
+
+    @Query(value =
+            "SELECT *\n" +
+            "FROM product\n" +
+            "WHERE articul = :articul", nativeQuery = true)
+    Optional<Product> getPByArticul(long articul);
 
     @Query(value =
             "SELECT *\n" +
@@ -55,7 +68,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "WHERE :quantity <= quantity\n" +
             "AND :price <= price\n" +
             "AND provider_fk IN :providersEdrpous\n" +
-            "AND category_fk IN :categoriesIds", nativeQuery = true)
+            "AND category_fk IN :categoriesIds\n" +
+            "ORDER BY name", nativeQuery = true)
     Iterable<Product> findFilteredProducts(int quantity, double price, List<Long> providersEdrpous, List<Long> categoriesIds);
 
     @Query(value =
@@ -84,7 +98,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     "SELECT PRO2.order_id\n" +
                     "FROM ((product p1 INNER JOIN product_in_order ON p1.articul = product_articul)\n" +
                     "   INNER JOIN order_t ON product_in_order.order_id = order_t.id) PRO2\n" +
-                    "WHERE PRO2.status = 'DONE' AND PRO2.product_articul = :productArticul\n))", nativeQuery = true)
+                    "WHERE PRO2.status = 'DONE' AND PRO2.product_articul = :productArticul\n))\n" +
+            "ORDER BY name", nativeQuery = true)
     Iterable<Product> findFilteredProductsWithProduct(int quantity, double price, List<Long> providersEdrpous, List<Long> categoriesIds, Long productArticul);
 
     @Query(value =
@@ -108,7 +123,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                          "(product_in_order JOIN order_t ON id = order_id) ON articul = product_articul\n" +
                    "WHERE (status = 'DONE' OR status IS NULL)\n" +
                    "AND (date_created BETWEEN :dateStart AND :dateEnd) OR date_created IS NULL\n" +
-                   "GROUP BY articul", nativeQuery = true)
+                   "GROUP BY articul\n" +
+                   "ORDER BY articul", nativeQuery = true)
     Iterable<ProductReportValues> productReport(LocalDate dateStart, LocalDate dateEnd);
 
     @Query(value = "SELECT COALESCE(SUM(prod_quantity),0) AS soldQuantity\n" +

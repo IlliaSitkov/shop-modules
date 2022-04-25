@@ -112,14 +112,12 @@ public class ProviderServiceImpl implements ProviderService {
 
     @Override
     public Provider getProviderByEdrpou(Long edrpou) {
-        return providerRepository.findById(edrpou).orElseThrow(() -> new NoProviderWithSuchEdrpou(edrpou));
+        return providerRepository.getPByEdrpou(edrpou).orElseThrow(() -> new NoProviderWithSuchEdrpou(edrpou));
     }
 
     @Override
     public Iterable<Provider> getAll() {
-        List<Provider> providers = providerRepository.findAll();
-        //Collections.sort(providers);
-        return providers;
+        return providerRepository.getAll();
     }
 
     @Override

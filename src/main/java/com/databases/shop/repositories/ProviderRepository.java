@@ -10,9 +10,22 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Repository
 public interface ProviderRepository extends JpaRepository<Provider, Long> {
+
+    @Query(value =
+            "SELECT *\n" +
+            "FROM provider\n" +
+            "ORDER BY name", nativeQuery = true)
+    Iterable<Provider> getAll();
+
+    @Query(value =
+            "SELECT *\n" +
+            "FROM provider\n" +
+            "WHERE edrpou = :edrpou", nativeQuery = true)
+    Optional<Provider> getPByEdrpou(long edrpou);
 
     @Query(value =
             "SELECT *\n" +
@@ -60,7 +73,8 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
                                 "AND product_articul IN(\n" +
                                     "SELECT articul\n" +
                                     "FROM product\n" +
-                                    "WHERE provider_fk = edrpou)))", nativeQuery = true)
+                                    "WHERE provider_fk = edrpou)))\n" +
+            "ORDER BY name", nativeQuery = true)
     Iterable<Provider> findHavingQuantityOfProductsSoldBigger(@Param("quantity") int quantity);
 
     @Query(value =
@@ -104,7 +118,8 @@ public interface ProviderRepository extends JpaRepository<Provider, Long> {
                                "AND product_articul IN(\n" +
                                     "SELECT articul\n" +
                                     "FROM product\n" +
-                                    "WHERE provider_fk = prov.edrpou)))", nativeQuery = true)
+                                    "WHERE provider_fk = prov.edrpou)))\n" +
+            "ORDER BY name", nativeQuery = true)
     Iterable<Provider> findHavingJustSalesmenOfProviderAndQuantityOfProductsSoldBigger(@Param("quantity") int quantity, @Param("providerEdrpou") Long providerEdrpou);
 
 }
